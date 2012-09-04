@@ -4809,7 +4809,7 @@ a.badge:hover {
   border-bottom: none;
 }
 .navbar .nav-collapse.collapse  > .nav li > a:hover {
-  background-color: #4183c4;
+  background-color: #78b34f;
   color: #ffffff;
   text-shadow: none;
 }

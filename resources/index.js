@@ -1,13 +1,12 @@
-var Resource = require('resorcery').resource;
 var _ = require('underscore');
 
 // the root resource at /
-exports.handler = new Resource({
+exports.handler = {
 
-  GET : function(req, res){
+  GET : function($){
     this.repr({ _links : this.uri.links()});
   }
 
 
-});
+};
 
