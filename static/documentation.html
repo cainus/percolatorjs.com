@@ -1,0 +1,217 @@
+
+<!DOCTYPE html>
+<html lang="en" ng-app="percdocs">
+  <head>
+    <meta charset="utf-8">
+    <title>percolator.js</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="">
+    <meta name="author" content="">
+
+    <!-- Le styles -->
+    <link href="css/bootstrap.css" rel="stylesheet">
+    <style type="text/css">
+      body {
+        padding-top: 60px;
+        padding-bottom: 40px;
+      }
+    </style>
+    <link href="css/bootstrap-responsive.css" rel="stylesheet">
+    <link href="css/sh_acid.min.css" rel="stylesheet">
+
+    <!-- Le HTML5 shim, for IE6-8 support of HTML5 elements -->
+    <!--[if lt IE 9]>
+      <script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+
+    <!-- Le fav and touch icons -->
+    <link rel="shortcut icon" href="ico/favicon.ico">
+    <link rel="apple-touch-icon-precomposed" sizes="144x144" href="ico/apple-touch-icon-144-precomposed.png">
+    <link rel="apple-touch-icon-precomposed" sizes="114x114" href="ico/apple-touch-icon-114-precomposed.png">
+    <link rel="apple-touch-icon-precomposed" sizes="72x72" href="ico/apple-touch-icon-72-precomposed.png">
+    <link rel="apple-touch-icon-precomposed" href="ico/apple-touch-icon-57-precomposed.png">
+    <script type="text/javascript" src="/js/sh_main.min.js"></script>
+    <script type="text/javascript" src="/js/sh_javascript.min.js"></script>
+  </head>
+
+  <body  onload="sh_highlightDocument();">
+
+    <div class="navbar navbar-fixed-top">
+      <div class="navbar-inner">
+        <div class="container">
+          <a class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse">
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+          </a>
+          <a class="brand" href="/"><img src="/img/headr-nav.png" /></a>
+          <div class="nav-collapse collapse">
+            <ul class="nav">
+              <li><a href="/">Home</a></li>
+              <li class="active"><a href="about.html">About</a></li>
+              <li><a href="https://github.com/cainus/percolator">Source Code</a></li>
+              <li><a href="documentation.html">Documentation</a></li>
+            </ul>
+          </div><!--/.nav-collapse -->
+        </div>
+      </div>
+    </div>
+
+    <div class="container">
+      <div >
+        <h3>
+        Documentation
+        </h3>
+     <div>
+      <h4>Hello World Quick Start:</h4>
+
+<ul>
+<li> <code>npm install Percolator</code>
+</li>
+<li> Create a <code>server.js</code> in your project directory, and copy this code below into it:</li>
+<pre class="sh_javascript">
+var Percolator = require('Percolator').Percolator;
+
+var server = new Percolator();
+server.route('/', {  GET : function($){
+                              $.json({message : 'Hello World!'}).send();
+                            }});
+server.listen(function(err){
+  console.log('server is listening on port ', server.port);
+});
+</pre>
+
+</ul>
+<ul>
+<li>
+<p>Run the server:
+<code>node server.js</code>
+</p>
+</li>
+<li><p>See your "Hello World" output at http://localhost:3000/ and be completely floored by the greatest 
+API of all time.  Or not.</p>
+The output json look like this:
+<pre class="sh_javascript">
+{
+  message: "Hello World!",
+  _links: {
+    self: {
+      href: "http://localhost:3000/"
+    }
+  }
+}
+</pre >
+
+You'll notice that Percolator automatically adds a link to the document itself.  This is because 
+it tries to help you create a surfable "Hypermedia" API where every endpoint is accessible from a link
+in another endpoint, and where everything that can be done with the API is described in the API
+itself.
+</li>
+</ul>
+
+<div class="alert alert-success">
+  <h4>Why should I care about Hypermedia??!?</h4>
+  <p>
+  Because Hypermedia APIs are pretty awesome for the people using your API.
+  </p>
+  <p>
+  Developers can find their way to all your endpoints just by following the links in the json payload
+  instead of having to read a bunch of docs.  Using a browser plugin like JSONView for 
+  <a href="http://jsonview.com/">Firefox</a> or 
+  <a href="https://chrome.google.com/webstore/detail/jsonview/chklaanhfefbnpoihckbnefhakgolnmc">chrome</a> 
+  makes it so developers can just surf around your API in their browser as if your 
+  responses are regular web pages.
+  </p>
+  <p>
+  These types of APIs are machine-readable as well, so they're spider-able, and even allow automatic 
+  form generation, or automated fuzz-testing.
+  </p>
+
+  <p>
+  In other frameworks adding links everywhere can be time-consuming.  Percolator makes this either 
+  automatic or very easy though.
+
+  </p>
+  <p>
+  NOTE:  If you're worried about the size of your responses, keep in mind that 
+  with proper caching and compression (gzip), there should be little to no cost to your 
+  clients' performance or bandwidth.
+  </p>
+</div>
+
+<!--
+<h4>Hello World Refactored:</h4>
+
+<p>While this is pretty simple, it's also not super-interesting.  One of the interesting features of 
+Percolator is that it lets you load your route-handling code from external files instead:</p>
+
+<ul>
+<li>Move your "Hello World" handler into a file at the path <code>./resources/index.js</code> by first creating the 
+<code>resources</code> directory and then the <code>index.js</code> file in it and then copying the handler logic into <code>index.js</code>
+like so:</li>
+</ul>
+<pre class="sh_javascript">
+exports.handler = {
+  GET : function(req, res){
+    res.end('Hello World!');
+  }
+}
+</pre>
+We'll call files like that "resources" from now on.
+
+<ul>
+<li>Change your server.js to call <code>routeDirectory()</code> instead of <code>server.router.route()</code> like so:</li>
+</ul>
+
+<pre class="sh_javascript">
+var Percolator = require('Percolator');
+
+var server = new Percolator();
+server.routeDirectory(__dirname + '/resources', function(err){
+  if (!!err) {console.log(err);}
+  server.listen(function(err){
+    console.log('server is listening on port ', server.port);
+  });
+});
+</pre>
+
+<ul>
+<li>
+<p>Run the server:
+<code>node server.js</code>
+</p>
+</li>
+<li><p>See your "Hello World" output at http://localhost:3000/ .</p></li>
+</ul>
+    </div>
+    -->
+
+
+    <!--  END DOCS --> 
+      </div>
+
+    </div> <!-- /container -->
+
+    <!-- Le javascript
+    ================================================== -->
+    <!-- Placed at the end of the document so the pages load faster -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js"></script>
+    <script src="js/bootstrap-transition.js"></script>
+    <script src="js/bootstrap-alert.js"></script>
+    <script src="js/bootstrap-modal.js"></script>
+    <script src="js/bootstrap-dropdown.js"></script>
+    <script src="js/bootstrap-scrollspy.js"></script>
+    <script src="js/bootstrap-tab.js"></script>
+    <script src="js/bootstrap-tooltip.js"></script>
+    <script src="js/bootstrap-popover.js"></script>
+    <script src="js/bootstrap-button.js"></script>
+    <script src="js/bootstrap-collapse.js"></script>
+    <script src="js/bootstrap-carousel.js"></script>
+    <script src="js/bootstrap-typeahead.js"></script>
+    <script src="js/bootstrap-affix.js"></script>
+    
+
+  </body>
+</html>
+
+
