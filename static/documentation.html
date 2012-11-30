@@ -139,6 +139,348 @@ itself.
   </p>
 </div>
 
+<h4>The Context Object ($)</h4>
+The "Hello World" example should be pretty straightforward, except it has a strange dollar sign ($) in it.  
+This is the context object.  The context object is basically just a holder for all the things your request 
+handler will care about.  You can name it whatever you want really, but '$' is a nice short name that you're
+unlikely to have a clash with in a server-side environment.  It has a number of interesting properties:
+
+<h5>$.req</h5>
+This is the unaltered <a href="http://nodejs.org/api/http.html#http_class_http_serverrequest">request object</a> from the node.js standard library.
+
+<h5>$.res</h5>
+This is the unaltered <a href="http://nodejs.org/api/http.html#http_class_http_serverrequest">response object</a> from the node.js standard library.
+
+<h5>$.status</h5>
+<p>
+The status module is automatically attached to your resource handler at request time. It is just a bunch of helper functions for dealing with response statuses.
+</p>
+
+<p>
+This is an important module because building great APIs requires excellent and consistent error and status reporting.
+</p>
+
+<p>
+To understand what the codes mean, please refer to <a href="http://www.w3.org/Protocols/rfc2616/rfc2616-sec10.html">http://www.w3.org/Protocols/rfc2616/rfc2616-sec10.html</a>.
+</p>
+
+<h6>Usage</h6>
+These methods generally set the HTTP status and end the response, so in general you should not expect to write more to the response after these. If a response body makes sense, it will generally be written automatically. For clarity, it's recommended that when you call one of these functions, you call it with return in front of it. Here's an example:
+
+<pre class="sh_javascript">
+server.route('/', {  GET : function($){
+                              return $.status.redirect('/someOtherUrl');
+                            }});
+</pre>
+<p>
+Here are the functions that it makes available in your method handler:
+</p>
+
+<h6>Redirect scenarios</h6>
+<dl>
+  <dt>
+$.status.created(redirectUrl);
+  </dt>
+  <dd>
+This method is used for HTTP STATUS 201 scenarios when the server has just created a resource successfully so that the server can tell the client where to find it. It sets the status to 201 and sets the 'Location' header to the redirectUrl.
+  </dd>
+</dl>
+
+<dl>
+  <dt>
+    $.status.movedPermanently(redirectUrl);
+  </dt>
+  <dd>
+    This method is used for HTTP STATUS 301 scenarios where a resource has been permanently moved somewhere else so the server can tell the client where to find it. It sets the status to 301 and sets the 'Location' header to the redirectUrl.
+  </dd>
+</dl>
+
+<dl>
+  <dt>
+    $.status.redirect(redirectUrl);
+  </dt>
+  <dd>
+    This is just an alias of movedPermanently()
+  </dd>
+</dl>
+
+<h6>Error Scenarios</h6>
+All of the error scenarios are handled similarly and attempt to show a response body that indicates the error that occurred as well. The status code will be set on the response as well as in that response body.
+
+All of these methods additionally take a single parameter where additional detail information can be added. For example:
+
+<pre class="sh_javascript">
+server.route('/', {  GET : function($){
+                              return $.status.internalServerError('The server is on fire.');
+                            }});
+</pre>
+
+Output for application/json:
+<code>
+{"type":500,"message":"Internal Server Error","detail":"The server is on fire"}
+</code>
+<h6>Error response methods (with example response for application/json):</h6>
+<code>
+</code>
+
+<dl>
+  <dt>
+    $.status.badRequest([detail])
+  </dt>
+  <dd>
+    <code>
+    {"type":400,"message":"Bad Request"}
+    </code>
+  </dd>
+</dl>
+
+
+<dl>
+  <dt>
+    $.status.unauthenticated([detail])
+  </dt>
+  <dd>
+    <code>
+      {"type":401,"message":"Unauthenticated"}
+    </code>
+  </dd>
+</dl>
+
+<dl>
+  <dt>
+      $.status.forbidden([detail])
+  </dt>
+  <dd>
+    <code>
+      {"type":403,"message":"Forbidden"}
+    </code>
+  </dd>
+</dl>
+
+
+<dl>
+  <dt>
+      $.status.notFound([detail])
+  </dt>
+  <dd>
+    <code>
+{"type":404,"message":"Not Found"}
+    </code>
+  </dd>
+</dl>
+
+<dl>
+  <dt>
+      $.status.methodNotAllowed([detail])
+  </dt>
+  <dd>
+    <code>
+{"type":405,"message":"Method Not Allowed"}
+    </code>
+  </dd>
+</dl>
+
+<dl>
+  <dt>
+      $.status.notAcceptable([detail])
+  </dt>
+  <dd>
+    <code>
+      {"type":406,"message":"Not Acceptable"}
+    </code>
+  </dd>
+</dl>
+
+
+<dl>
+  <dt>
+      $.status.conflict([detail])
+  </dt>
+  <dd>
+    <code>
+        {"type":409,"message":"Conflict"}
+    </code>
+  </dd>
+</dl>
+
+<dl>
+  <dt>
+      $.status.gone([detail])
+  </dt>
+  <dd>
+    <code>
+        {"type":410,"message":"Gone"}
+    </code>
+  </dd>
+</dl>
+
+<dl>
+  <dt>
+      $.status.lengthRequired([detail])
+  </dt>
+  <dd>
+    <code>
+        {"type":411,"message":"Length Required"}
+    </code>
+  </dd>
+</dl>
+
+<dl>
+  <dt>
+      $.status.preconditionFailed([detail])
+  </dt>
+  <dd>
+    <code>
+        {"type":412,"message":"Precondition Failed"}
+    </code>
+  </dd>
+</dl>
+
+
+<dl>
+  <dt>
+      $.status.requestEntityTooLarge([detail])
+  </dt>
+  <dd>
+    <code>
+        {"type":413,"message":"'Request Entity Too Large"}
+    </code>
+  </dd>
+</dl>
+
+
+
+<dl>
+  <dt>
+      $.status.requestEntityTooLarge([detail])
+  </dt>
+  <dd>
+    <code>
+        {"type":413,"message":"'Request Entity Too Large"}
+    </code>
+  </dd>
+</dl>
+
+
+
+
+<dl>
+  <dt>
+$.status.requestUriTooLong([detail])
+  </dt>
+  <dd>
+    <code>
+{"type":414,"message":"Request URI Too Long"}
+    </code>
+  </dd>
+</dl>
+
+
+
+<dl>
+  <dt>
+$.status.unsupportedMediaType([detail])
+  </dt>
+  <dd>
+    <code>
+{"type":415,"message":"Unsupported Media Type"}
+    </code>
+  </dd>
+</dl>
+
+
+
+<dl>
+  <dt>
+$.status.unprocessableEntity([detail])
+  </dt>
+  <dd>
+    <code>
+{"type":422,"message":"'Unprocessable Entity"}
+    </code>
+  </dd>
+</dl>
+
+
+
+<dl>
+  <dt>
+$.status.tooManyRequests([detail])
+  </dt>
+  <dd>
+    <code>
+{"type":429,"message":"Too Many Requests"}
+    </code>
+  </dd>
+</dl>
+
+
+
+<dl>
+  <dt>
+$.status.internalServerError([detail])
+  </dt>
+  <dd>
+    <code>
+{"type":500,"message":"Internal Server Error"}
+    </code>
+  </dd>
+</dl>
+
+
+
+<dl>
+  <dt>
+$.status.notImplemented([detail])
+  </dt>
+  <dd>
+    <code>
+{"type":501,"message":"Not Implemented"}
+    </code>
+  </dd>
+</dl>
+
+
+
+<dl>
+  <dt>
+$.status.badGateway([detail])
+  </dt>
+  <dd>
+    <code>
+{"type":502,"message":"Bad Gateway"}
+    </code>
+  </dd>
+</dl>
+
+
+
+<dl>
+  <dt>
+      $.status.serviceUnavailable([detail])
+  </dt>
+  <dd>
+    <code>
+        {"type":503,"message":"Service Unavailable"}
+    </code>
+  </dd>
+</dl>
+
+
+
+<dl>
+  <dt>
+      $.status.gatewayTimeout([detail])
+  </dt>
+  <dd>
+    <code>
+        {"type":504,"message":"Gateway Timeout"}
+    </code>
+  </dd>
+</dl>
+
+
+
 <!--
 <h4>Hello World Refactored:</h4>
 
