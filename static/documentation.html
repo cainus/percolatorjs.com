@@ -63,11 +63,13 @@
         Documentation
         </h3>
      <div>
+      <h4>Installation</h4>
+      <code>npm install Percolator</code>
+      <h4>Running Tests</h4>
+      <code>make test</code>
       <h4>Hello World Quick Start:</h4>
 
 <ul>
-<li> <code>npm install Percolator</code>
-</li>
 <li> Create a <code>server.js</code> in your project directory, and copy this code below into it:</li>
 <pre class="sh_javascript">
 var Percolator = require('Percolator').Percolator;
@@ -139,6 +141,92 @@ itself.
   </p>
 </div>
 
+<h4>The Percolator Server Object</h4>
+Any Percolator objects you create are just http servers (based on 
+<a href="https://github.com/cainus/oneone">oneone</a>) with a bunch of helpers
+for making JSON APIs more easily.
+
+<h5>The constructor</h5>
+The constructor returns a percolator server.  It can take an optional single object as 
+a parameter like so:
+
+<pre class="sh_javascript">
+var server = new Percolator({"some" : "object"});
+</pre>
+<p>
+This is called the <strong>app</strong> object.
+</p>
+<p>
+
+Anything you put in the app object will be available to all your HTTP handlers, so it's 
+great for shared configuration, database objects, etc.
+</p>
+
+<p>Additionally, the constructor recognizes a few special properties of the app object:</p>
+
+<p><strong>protocol</strong> - 'http' or 'https'<br>
+<strong>resourcePath</strong> - the url path that all the resource will be routed from (eg. Setting it to '/' will serve the 
+  resources from <a href="http://yourdomain.com/">http://yourdomain.com/</a> while setting it to '/api' will serve the resources from 
+  <a href="http://yourdomain.com/api">http://yourdomain.com/api</a> .<br>
+<strong>staticDir</strong> - The directory on the filesystem from which you will serve static content (use an absolute path!).<br><strong>port</strong> - the http port.  A low port like 80 will not work unless you run the app with root privileges.  </p>
+
+<p>You're obviously going to want to limit the number of app object variables that you add beyond the necessary ones, but
+certain types of objects might make sense in that shared space.</p>
+    </div>
+
+<h5>route(routeString, resourceObject)</h5>
+<p>
+The route() method of the server takes two parameters, the route string and the resource object.
+</p>
+
+<p>
+It then sets a route using the route string that the given resource object will handle when
+an incoming request matches that route.
+</p>
+
+<p>
+Route strings can be regular expressions, or 
+<a href="http://expressjs.com/api.html">express</a>/sinatra-style route strings.
+</p>
+
+<p>
+The resource object is any object that has methods on it that match HTTP methods like POST, PUT, GET, 
+DELETE, etc.  The method takes only one parameter: the context object ($).
+</p>
+
+<p>
+The Hello World example above has a resource object that implements only GET:
+</p>
+<pre class="sh_javascript">
+{
+  GET : function($){
+    $.json({message : 'Hello World!'}).send();
+  }
+}
+</pre>
+Of course, other HTTP methods (PUT, POST, DELETE, etc) can be added to this object as well to
+make this API do more.  Here it is, passed to route() with a routeString of '/', the root path:
+
+<pre class="sh_javascript">
+server.route('/', {  GET : function($){
+                              $.json({message : 'Hello World!'}).send();
+                            }});
+</pre>
+
+
+<h5>listen([cb])</h5>
+Call listen() on the server to start it listening.  The default port (unless overridden by 
+the app object) is 3000.
+
+listen() takes an optional callback as well, that is called when the server is listening, or 
+when there's been an error.  The error will be the first parameter to this callback, if it exists.
+
+<pre class="sh_javascript">
+server.listen(function(err){
+  console.log('server is listening on port ', server.port);
+});
+</pre>
+
 <h4>The Context Object ($)</h4>
 The "Hello World" example should be pretty straightforward, except it has a strange dollar sign ($) in it.  
 This is the context object.  The context object is basically just a holder for all the things your request 
@@ -150,6 +238,9 @@ This is the unaltered <a href="http://nodejs.org/api/http.html#http_class_http_s
 
 <h5>$.res</h5>
 This is the unaltered <a href="http://nodejs.org/api/http.html#http_class_http_serverrequest">response object</a> from the node.js standard library.
+
+<h5>$.app</h5>
+This is the app object that you passed in the constructor to Percolator.
 
 <h5>$.status</h5>
 <p>
@@ -640,8 +731,6 @@ $.uri.self();
   </dd>
 </dl>
 
-
-
 <dl>
   <dt>
 $.uri.urlDecode(someEncodedStr)
@@ -655,10 +744,6 @@ $.uri.urlDecode("this%20is%20a%20test");
   </dd>
 </dl>
 
-
-
-
-
 <dl>
   <dt>
 $.uri.urlEncode(somestr);
@@ -671,11 +756,6 @@ $.uri.urlEncode("this is a test");
 </pre>
   </dd>
 </dl>
-
-
-
-
-
 
 <!--
 <h4>Hello World Refactored:</h4>
