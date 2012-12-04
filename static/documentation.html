@@ -308,6 +308,25 @@ This method is used for HTTP STATUS 201 scenarios when the server has just creat
   </dd>
 </dl>
 
+<h6>Success responses</h6>
+<p>
+"200 OK" statuses are the default, so you don't need to specify those explicitly.
+</p>
+<p>
+201 Created statuses are described in the redirect section above.
+</p>
+
+<dl>
+  <dt>
+    $.status.accepted();
+  </dt>
+  <dd>
+    Used to indicate that a response has been accepted, but not yet processed, this response will emit a "202 Accepted" status.
+  </dd>
+</dl>
+
+// TODO Where's "204 No Body"?  Missing any other 200-level responses?
+
 <h6>Error Scenarios</h6>
 All of the error scenarios are handled similarly and attempt to show a response body that indicates the error that occurred as well. The status code will be set on the response as well as in that response body.
 
@@ -324,8 +343,6 @@ Output:<br />
 {"type":500,"message":"Internal Server Error","detail":"The server is on fire"}
 </code>
 <h6>Error response methods:</h6>
-<code>
-</code>
 
 <dl>
   <dt>
@@ -602,12 +619,12 @@ $.uri.child('song');
 
 <dl>
   <dt>
-$.url.get(path [, variableHash]);
+$.uri.get(path [, variableHash]);
   </dt>
   <dd>
 Gets a url by path. An optional hash may be passed of variables to fill in necessary path variables.
     <pre class="sh_javascript">
-$.url.get('/artist/:artist', {artist : 1234});
+$.uri.get('/artist/:artist', {artist : 1234});
 // could return something like:  'http://hostname.com/artist/1234' if such a route exists.
 </pre>
   </dd>
@@ -770,6 +787,210 @@ $.uri.urlEncode("this is a test");
   </dd>
 </dl>
 
+<h5>$.json</h5>
+
+$.json is a function that takes an object for later output as json.  It returns a "HyperJSON" object which is just 
+a fluid (chained) interfaced for creating json with links easily.
+
+
+<dl>
+  <dt>
+     toString()
+  </dt>
+  <dd>
+    returns a json string representation of the input object.
+    <pre class="sh_javascript">
+$.json({some : "test"}).toString();
+// returns '{"some":"test"}'
+</pre>
+  </dd>
+</dl>
+
+<dl>
+  <dt>
+     toObject()
+  </dt>
+  <dd>
+    returns your input object, with any alterations you've made so far
+    <pre class="sh_javascript">
+$.json({some : "test"}).toObject();
+// returns {some:"test"}
+</pre>
+  </dd>
+</dl>
+
+<dl>
+  <dt>
+     property(name, value)
+  </dt>
+  <dd>
+    adds a property to your input object
+    <pre class="sh_javascript">
+$.json({some : "test"}).property("also", "this").toObject();
+// returns {some:"test",also:"this"}
+</pre>
+  </dd>
+</dl>
+
+<dl>
+  <dt>
+     link(rel, href, [options])
+  </dt>
+  <dd>
+    adds a link to your input object
+    <pre class="sh_javascript">
+$.json({some : "test"}).link("somerel", "http://some.example.com").toObject();
+// returns {some:"test",_links:{somerel:{href:"http://some.example.com"}}}
+</pre>
+  </dd>
+  <dd>
+    The options object can be used to specify the http method with a 'method' property and
+    a json schema with a 'schema' property   The schema property should be an object that, when converted to
+    json, is a valid <a href="http://json-schema.org/">json schema</a> object.
+    <pre class="sh_javascript">
+$.json({some : "test"}).link("somerel", "http://some.example.com", {method:"POST", schema:{}}).toObject();
+// returns {some:"test",_links:{somerel:{href:"http://some.example.com",method:"POST",schema:{}}}}
+</pre>
+  </dd>
+</dl>
+
+<dl>
+  <dt>
+     send()
+  </dt>
+  <dd>
+    sends the input obect as json in the http response and ends the response.
+    <pre class="sh_javascript">
+$.json({some : "test"}).send();
+</pre>
+  </dd>
+</dl>
+
+<h5>$.jsonCollection</h5>
+This object is meant for creating and manipulating json "collections" which are useful in general when you want
+to output a list of things in json.  It has all the same capibilities as $.json, but it also adds some additional
+capability for dealing with the individual items in the list.
+
+$.jsonCollection() is function that takes either an array or an object that will be treated as a hash.  It will
+ then add that list/hash to an _items property in a wrapper object.
+
+<pre class="sh_javascript">
+// object/hash version
+$.jsonCollection({someitem : "1234",someotheritem : 4567}).toObject();
+// returns:
+{
+  _items : {
+    someitem : "1234",
+    someotheritem : "4567",
+  }
+}
+</pre>
+  </dd>
+</dl>
+
+<pre class="sh_javascript">
+// array version
+$.jsonCollection([{someitem : "1234"],{someotheritem : 4567}]).toObject();
+// returns:
+{
+  _items : [
+    {someitem : "1234"},
+    {someotheritem : "4567"},
+  ]
+}
+
+</pre>
+  </dd>
+</dl>
+
+
+
+<dl>
+  <dt>
+     each(cb)
+  </dt>
+  <dd>
+    runs a given callback on each item in the list.  The list can be an array or an object that will be 
+    treated as a hash. The callback takes an individual item as its only parameter and replaces that item 
+    with the return value 
+    <pre class="sh_javascript">
+$.jsonCollection({some : "test"}).each(function(item){return item + "2";}).toObject();
+// returns {_items : {some:"test2"}}
+$.jsonCollection([{some:"test"}]).each(function(item){return item + "2";}).toObject();
+// returns {_items:[{some:"test2"}]}
+// TODO verify the output of these.  Add parent/self links as well.
+</pre>
+  </dd>
+</dl>
+
+
+<dl>
+  <dt>
+     linkEach(rel, cb)
+  </dt>
+  <dd>
+    You can use this function for adding a link to each item in the collection.  The rel argument is
+    the rel property of the link.  The rel property is usually a way of describing what this link will lead to.
+    // TODO make a link to the uri spec that talks about "rel"
+    The cb argument is a callback that will be run on each item in the list and to create a link with the given rel 
+    from the callback's return value and add it to that item.  The callback takes an individual item as its 
+    only parameter and replaces that item with the return value 
+<pre class="sh_javascript">
+$.jsonCollection({some : "test"}).linkEach('plustwo', function(item){return 'http://server.com/' + item + "2";}).toObject();
+// returns: 
+{
+  _items : {
+    some:"test2"
+  }
+}
+</pre>
+<pre class="sh_javascript">
+$.jsonCollection([{some : "test"}]).linkEach('plustwo', function(item){return 'http://server.com/' + item['some'] + "2";}).toObject();
+// returns 
+{
+  _items : [
+    { some:"test2"}
+  ]
+}
+</pre>
+// TODO verify the output of these.  Add parent/self links as well.
+  </dd>
+</dl>
+
+
+
+<h5>$.onJson</h5>
+// TODO
+
+<h5>$.onBody</h5>
+// TODO
+
+
+<h4>Resource Objects</h4>
+// TODO
+// authenticate
+// basicAuthenticate
+// fetch
+// handler and wildcard
+
+<h4>JsonModules</h4>
+// TODO.  should there be a rename first?  CRUDModule?
+// list
+// upsert
+// create
+// update
+// schema
+// updateSchema
+// createSchema
+// destroy
+// fetch
+// collectionGET
+// memberGET
+// handler / wildcard
+
+
+<h4>Advanced Routing</h4>
+// TODO edit and uncomment below
 <!--
 <h4>Hello World Refactored:</h4>
 
