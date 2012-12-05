@@ -1057,21 +1057,161 @@ NOTE: If you're expecting json, then you should normally use $.onJson() instead 
 // fetch
 // handler and wildcard
 
-<h4>JsonModule</h4>
-// TODO.  should there be a rename first?  CRUDModule?
-// list
-// upsert
-// create
-// update
-// schema
-// updateSchema
-// createSchema
-// destroy
-// fetch
-// collectionGET
-// memberGET
-// handler / wildcard
 -->
+<h4>JsonModule</h4>
+<p>
+A JsonModule is a module that implements handlers for
+a json collection, and all its members.  It allows you 
+to implement just your CRUD (create, read, update, 
+delete) logic for the collection and its
+members without having to deal with much HTTP/API logic at 
+all.
+</p>
+
+<h5>Creating a JsonModule</h5>
+
+<p>
+Here's how it's constructed:
+</p>
+<pre class="sh_javascript">
+var JsonModule = require('Percolator').JsonModule;
+var module = new JsonModule({
+  // implementation strategy goes here!
+});
+</pre>
+<p>
+The module that is created will have two properties: 
+<strong>handler</strong> and <strong>member</strong>.  The
+<strong>handler</strong> property is a handler for a collection and can just 
+be routed like this:
+</p>
+
+<pre class="sh_javascript">
+server.route('/myCollection', module.handler);
+</pre>
+<p>
+The <strong>wildcard</strong> property is a handler for the members
+of the collection and can be routed like this:
+</p>
+
+<pre class="sh_javascript">
+server.route('/myCollection/:memberid', module.wildcard);
+</pre>
+
+</p>
+
+<h5>list($, cb)</h5>
+<p>
+Implement the list() function to provide the module with all
+the items that should show up in the collections GET view.  
+JsonModule requires that either this function or collectionGET()
+is implemented to ensure that your collection is accessible via
+GET.
+</p>
+<pre class="sh_javascript">
+var module = new JsonModule({
+  list : function($, cb){
+    // generate the list to return for the collection view.
+    cb(null, [{some : "object"}, {some : "otherobject"}]);
+  }
+});
+</pre>
+<h5> fetch($, id, cb) </h5>
+<p>
+Implement the fetch() function to provide the GET handler
+for individual members of the collection.  If you don't 
+implement this, you'll need to implement memberGET() to be 
+able to GET resources for individual members.
+</p>
+
+<p>The fetch() function has three required parameters: the 
+context object, id, and cb.</p>
+
+<p>The <strong>id</strong> argument will simply be the last part of the 
+incoming path of the member url (ie If the url is 
+/messages/1234, the id will be '1234').</p>
+
+<p>The <strong>cb</strong> argument is a callback that takes two parameters.  The
+first parameter is an error object if any error occurred.  The
+second parameter should be an object that was fetched from your
+data source identified by the given id.  It will automatically
+by added to the context object as $.fetched in any member resource
+methods that you implement.
+</p>
+<p>
+The fetch() function will 404 for you automatically if you
+pass strict <strong>true</strong> to the callback (<strong>
+cb</strong>) as the first parameter.
+</p>
+<p>
+This function is also used for automatically determining
+if it should 404 for PUTs and DELETEs to the individual 
+members as well.
+</p>
+
+<pre class="sh_javascript">
+var module = new JsonModule({
+  fetch : function($, id, cb){
+    // get some item from your data source by the given id.
+    cb(null, theObject);
+  }
+});
+</pre>
+
+<h5> create($, obj, cb) </h5>
+<p>
+TODO
+</p>
+<pre class="sh_javascript">
+</pre>
+<h5> update($, id, obj, cb) </h5>
+<p>
+TODO
+</p>
+<pre class="sh_javascript">
+</pre>
+<h5> upsert($, id, obj, cb) </h5>
+<p>
+TODO
+</p>
+<pre class="sh_javascript">
+</pre>
+<h5> destroy($, id, cb) </h5>
+<p>
+TODO
+</p>
+<pre class="sh_javascript">
+</pre>
+<h5> collectionGET($) </h5>
+<p>
+TODO
+</p>
+<pre class="sh_javascript">
+</pre>
+<h5> memberGET($) </h5>
+<p>
+TODO
+</p>
+<pre class="sh_javascript">
+</pre>
+<h5> updateSchema </h5>
+<p>
+TODO
+</p>
+<pre class="sh_javascript">
+</pre>
+<h5> createSchema </h5>
+<p>
+TODO
+</p>
+<pre class="sh_javascript">
+</pre>
+<h5> schema </h5>
+<p>
+TODO
+</p>
+<pre class="sh_javascript">
+</pre>
 
 <h4>Advanced Routing</h4>
 <h5>Hello World Refactored:</h5>
