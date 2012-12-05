@@ -941,8 +941,8 @@ $.jsonCollection({some : "test"}).each(function(item){return item + "2";}).toObj
 // returns {_items : {some:"test2"}}
 $.jsonCollection([{some:"test"}]).each(function(item){return item + "2";}).toObject();
 // returns {_items:[{some:"test2"}]}
-// TODO verify the output of these.  Add parent/self links as well.
 </pre>
+<!-- TODO verify the output of these.  Add parent/self links as well. -->
   </dd>
 </dl>
 
@@ -979,7 +979,7 @@ $.jsonCollection([{some : "test"}]).linkEach('plustwo', function(item){return 'h
   ]
 }
 </pre>
-// TODO verify the output of these.  Add parent/self links as well.
+<!-- TODO verify the output of these.  Add parent/self links as well. -->
   </dd>
 </dl>
 
@@ -1049,6 +1049,7 @@ $.onBody(function(err, body){
 NOTE: If you're expecting json, then you should normally use $.onJson() instead of this method.
 </p>
 
+<!--
 <h4>Resource Objects</h4>
 // TODO
 // authenticate
@@ -1070,7 +1071,7 @@ NOTE: If you're expecting json, then you should normally use $.onJson() instead 
 // collectionGET
 // memberGET
 // handler / wildcard
-
+-->
 
 <h4>Advanced Routing</h4>
 <h5>Hello World Refactored:</h5>
