@@ -231,7 +231,39 @@ server.listen(function(err){
 </pre>
 
 <h5>onRequest(cb)</h5>
-(TODO)
+<p>
+The onRequest() method takes a callback as its only parameter.  The callback is called when
+a request occurs.
+</p>
+
+<p>
+The callback takes handler, context and cb parameters.  
+</p>
+
+<p>
+The <strong>handler</strong> is the resource object that is routed to the request url in 
+the router.  It will contain the functions meant to handle the different HTTP methods.
+</p>
+<p>
+The <strong>context</strong> ($) is the context object.  If you want to augment the 
+context object for some reason, for all requests, this is a great place to do it.
+</p>
+<p>
+The <strong>cb</strong> parameter is a callback that will be called to 'return' the 
+context object.  The context object should be its only parameter.
+</p>
+
+<p>
+Here's an example:
+</p>
+
+<pre class="sh_javascript">
+server.onRequest(function(handler, $, cb){
+  // print the request method and url for every request.
+  console.log(' <-- ', $.req.method, ' ', $.req.url);
+  cb(context);
+});
+</pre>
 
 <h4>The Context Object ($)</h4>
 The "Hello World" example should be pretty straightforward, except it has a strange dollar sign ($) in it.  
@@ -317,8 +349,6 @@ This method is used for HTTP STATUS 201 scenarios when the server has just creat
     Used to indicate that a response has been accepted, but not yet processed, this response will emit a "202 Accepted" status.
   </dd>
 </dl>
-
-// TODO Where's "204 No Body"?  Missing any other 200-level responses?
 
 <h6>Error Scenarios</h6>
 All of the error scenarios are handled similarly and attempt to show a response body that indicates the error that occurred as well. The status code will be set on the response as well as in that response body.
@@ -874,7 +904,7 @@ $.jsonCollection({someitem : "1234",someotheritem : 4567}).toObject();
 {
   _items : {
     someitem : "1234",
-    someotheritem : "4567",
+    someotheritem : "4567"
   }
 }
 </pre>
@@ -888,7 +918,7 @@ $.jsonCollection([{someitem : "1234"],{someotheritem : 4567}]).toObject();
 {
   _items : [
     {someitem : "1234"},
-    {someotheritem : "4567"},
+    {someotheritem : "4567"}
   ]
 }
 
