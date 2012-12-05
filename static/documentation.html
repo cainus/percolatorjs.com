@@ -248,13 +248,6 @@ This is the unaltered <a href="http://nodejs.org/api/http.html#http_class_http_s
 <h5>$.app</h5>
 This is the app object that you passed in the constructor to Percolator.
 
-<h5>$.json</h5>
-(TODO)
-<h5>$.jsonCollection</h5>
-(TODO)
-<h5>$.onBody</h5>
-(TODO)
-
 <h5>$.status</h5>
 <p>
 The status module is automatically attached to your resource handler at request time. It is just a bunch of helper functions for dealing with response statuses.
@@ -929,10 +922,13 @@ $.jsonCollection([{some:"test"}]).each(function(item){return item + "2";}).toObj
      linkEach(rel, cb)
   </dt>
   <dd>
-    You can use this function for adding a link to each item in the collection.  The rel argument is
-    the rel property of the link.  The rel property is usually a way of describing what this link will lead to.
-    // TODO make a link to the uri spec that talks about "rel"
-    The cb argument is a callback that will be run on each item in the list and to create a link with the given rel 
+    You can use this function for adding a link to each item in the collection.  The 
+    <strong>rel</strong> argument is
+    the rel property of the link.  The rel property is usually a way of describing what this link 
+    will lead to.  There are a bunch of 
+<a href="http://www.iana.org/assignments/link-relations/link-relations.xml">predefined rel names</a> 
+    or you can make your own.
+    The <strong>cb</strong> argument is a callback that will be run on each item in the list and to create a link with the given rel 
     from the callback's return value and add it to that item.  The callback takes an individual item as its 
     only parameter and replaces that item with the return value 
 <pre class="sh_javascript">
@@ -959,12 +955,69 @@ $.jsonCollection([{some : "test"}]).linkEach('plustwo', function(item){return 'h
 
 
 
-<h5>$.onJson</h5>
-// TODO
+<h5>$.onJson([schema], cb)</h5>
+<p>
+$.onJson() is used for handling a request where the request body is json (normally a PUT or POST).  It 
+takes care of accepting the incoming stream, attempting to parse it to json, and automatically 
+sending a 400 error if it does not parse.
+</p>
+<p>
+The first, <em>optional</em> parameter, <strong>schema</strong>,  is a 
+<a href="http://json-schema.org/">json schema</a> as a javascript object (not as a string).  This 
+schema object can be used to validate the incoming json object if desired.  $.onJson will return 
+an appropriate error to the user if the incoming json is not acceptable according to the schema.
+</p>
+<p>
+The last (or only) parameter is a callback that is used if the incoming json parses successfully.  
+The callback will take an 'error' and an 'object' parameter, where the error parameter will contain 
+any error that was not automatically handled (like a network error), and the object parameter will 
+contain any object that was deserialized from the incoming json (if possible).
+</p>
+<pre class="sh_javascript">
+// without a json schema...
+$.onJson(function(err, obj){
+  console.log('error: ', err);
+  console.log('object: ', obj);
+});
+</pre>
+<pre class="sh_javascript">
+// with a json schema...
+var schema = {
+    properties : {
+      "username" : {
+        type : "string",
+        required : true
+      }
+    };
+$.onJson(schema, function(err, obj){
+  console.log('error: ', err);
+  console.log('object: ', obj);
+});
+</pre>
 
-<h5>$.onBody</h5>
-// TODO
 
+
+
+<h5>$.onBody(cb)</h5>
+<p>
+$.onBody() is used for handling the streaming of non-json request bodies.
+</p>
+<p>
+The only parameter is a callback that takes an error and a body parameter.  The <strong>error
+</strong> parameter will be null unless an error occurred during streaming of the body, in 
+which case it will contain the error.  The <strong>body</strong> parameter will contain the
+request body as a string for use inside the callback.
+</p>
+
+<pre class="sh_javascript">
+$.onBody(function(err, body){
+  console.log('error: ', err);
+  console.log('body: ', body);  // body is just a string here
+});
+</pre>
+<p>
+NOTE: If you're expecting json, then you should normally use $.onJson() instead of this method.
+</p>
 
 <h4>Resource Objects</h4>
 // TODO
@@ -973,7 +1026,7 @@ $.jsonCollection([{some : "test"}]).linkEach('plustwo', function(item){return 'h
 // fetch
 // handler and wildcard
 
-<h4>JsonModules</h4>
+<h4>JsonModule</h4>
 // TODO.  should there be a rename first?  CRUDModule?
 // list
 // upsert
@@ -990,17 +1043,16 @@ $.jsonCollection([{some : "test"}]).linkEach('plustwo', function(item){return 'h
 
 
 <h4>Advanced Routing</h4>
-// TODO edit and uncomment below
-<!--
-<h4>Hello World Refactored:</h4>
+<h5>Hello World Refactored:</h5>
 
-<p>While this is pretty simple, it's also not super-interesting.  One of the interesting features of 
-Percolator is that it lets you load your route-handling code from external files instead:</p>
+<p>Percolator also allows a more advanced style of routing that lets you load 
+your route-handling resources from external files instead.</p>
 
 <ul>
-<li>Move your "Hello World" handler into a file at the path <code>./resources/index.js</code> by first creating the 
-<code>resources</code> directory and then the <code>index.js</code> file in it and then copying the handler logic into <code>index.js</code>
-like so:</li>
+<li>With the "Hello World" example, we could instead move the handler into a file at the path 
+<code>./resources/index.js</code>.  (First create a <code>resources</code> directory and 
+then the <code>index.js</code> file in it, and then copying the handler logic into 
+<code>index.js</code> like so:</li>
 </ul>
 <pre class="sh_javascript">
 exports.handler = {
@@ -1012,14 +1064,15 @@ exports.handler = {
 We'll call files like that "resources" from now on.
 
 <ul>
-<li>Change your server.js to call <code>routeDirectory()</code> instead of <code>server.router.route()</code> like so:</li>
+<li>Change your server.js to call <code>routeDirectory()</code> instead of <code>server.route()
+</code> like so:</li>
 </ul>
 
 <pre class="sh_javascript">
 var Percolator = require('Percolator');
 
 var server = new Percolator();
-server.routeDirectory(__dirname + '/resources', function(err){
+server.routeDirectory(__dirname + '/resources', '/api', function(err){
   if (!!err) {console.log(err);}
   server.listen(function(err){
     console.log('server is listening on port ', server.port);
@@ -1033,10 +1086,17 @@ server.routeDirectory(__dirname + '/resources', function(err){
 <code>node server.js</code>
 </p>
 </li>
-<li><p>See your "Hello World" output at http://localhost:3000/ .</p></li>
+<li><p>See your "Hello World" output at http://localhost:3000/api .  You should see the same output
+as the original "Hello World" example.</p></li>
 </ul>
+<p>
+This worked because index.js is the reserved filename for responding to '/'.  If you want to respond
+to uris like '/hello', you can simply drop a <code>hello.js</code> in that folder (that exports a 
+similar handler) and it will respond to http://localhost:3000/api/hello .  The advantage to this way 
+of routing is that all your resources can be in separate files so that your project can be more easily
+organized.
+</p>
     </div>
-    -->
 
 
     <!--  END DOCS --> 
