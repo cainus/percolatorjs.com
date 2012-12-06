@@ -1158,29 +1158,132 @@ var module = new JsonModule({
 });
 </pre>
 
-<h5> create($, obj, cb) </h5>
+<h5> create($, object, cb) </h5>
 <p>
-TODO
+The create() function is used for creating new resources via
+POST to the collection when the unique ID for the user (and 
+its URI in general) are server-generated and NOT client-provided.
+</p>
+
+<p>
+Implement create() to allow this kind of object creation.  The
+JsonModule will do json parsing and validation for you (if you 
+supply a <strong>schema</strong> or a <strong>createSchema
+</strong>) and 
+it will respond with appropriate error messages automatically
+in the case of failures.
+</p>
+
+<p>
+The function will be passed a context object ($), the 
+unserialized json object, and a callback.  The callback takes
+no parameters and can optionally be called in the event of 
+successful creation to respond with a 201 CREATED status.  You have
+the option of not calling the callback at all and instead
+responding however you want.
 </p>
 <pre class="sh_javascript">
+var module = new JsonModule({
+  create : function($, object, cb){
+    // store your object here
+    cb();
+  }
+});
 </pre>
 <h5> update($, id, obj, cb) </h5>
 <p>
-TODO
+The update() function is used for updating existing resources
+via PUT to the individual resource's existing URI.
+</p>
+<p>
+Implement update() to allow resources to be updated.  The 
+JsonModule will handle the json parsing and validation for you (
+if you supply a <strong>schema</strong> or an 
+<strong>updateSchema</strong>) and it will respond with 
+appropriate error messages automatically in the case of failures.
+</p>
+<p>
+The function will be passed a context object ($), the 'id' at the
+end of the resource's URI, the object returned from 
+<code>fetch()</code>, and a callback.  The callback takes
+no parameters and can optionally be called in the event of 
+successful update to respond with a 303 redirect.  You have
+the option of not calling the callback at all and instead
+responding however you want.
 </p>
 <pre class="sh_javascript">
+var module = new JsonModule({
+  update : function($, id, obj, cb){
+    // update your object here
+    cb();
+  };
+});
 </pre>
 <h5> upsert($, id, obj, cb) </h5>
 <p>
-TODO
+In general, "upsert" is short for "update if existing, and insert
+if not already existing".
+</p>
+<p>
+The upsert() function is used for updating existing resources
+or creating resources if they don't already exist via PUT 
+to the individual resource's URI.  If the URI already exists, 
+the resource there will be updated.  If the URI doesn't already 
+exist, the resource there will be created.  You would use upsert()
+when the unique ID and URI of the resource is determined by the 
+client and is NOT server-generated.
+</p>
+<p>
+Implement upsert() to allow resources to be upserted.  The 
+JsonModule will handle the json parsing and validation for you (
+if you supply a <strong>schema</strong> or both 
+<strong>updateSchema</strong> AND <strong>createSchema</strong>
+) and it will respond with appropriate error messages 
+automatically in the case of failures.
+</p>
+<p>
+The function will be passed a context object ($), the 'id' at the
+end of the resource's URI, the object returned from 
+<code>fetch()</code>, and a callback.  The callback takes
+no parameters and can optionally be called in the event of 
+successful 'upsertion' to respond with a 303 redirect.  You have
+the option of not calling the callback at all and instead
+responding however you want.
 </p>
 <pre class="sh_javascript">
+var module = new JsonModule({
+  upsert : function($, id, obj, cb){
+    // upsert your object here
+    cb();
+  };
+});
 </pre>
 <h5> destroy($, id, cb) </h5>
 <p>
-TODO
+The destroy() function is used for removing existing resources
+via DELETE to the individual resource's URI.  If the URI 
+already exists, the resource there will be removed.  If the 
+URI doesn't exist, JsonModule will automatically respond with 
+a 404 NOT FOUND status.
+</p>
+<p>
+Implement destroy() to allow resources to be removed.
+</p>
+<p>
+The function will be passed a context object ($), the 'id' at the
+end of the resource's URI, and a callback.  The callback takes
+no parameters and can optionally be called in the event of 
+successful 'removal' to respond with a 204 to indicate a success
+with no response body.  You have the option of not calling the 
+callback at all and instead responding however you want.
 </p>
 <pre class="sh_javascript">
+var module = new JsonModule({
+  destroy : function($, id, cb){
+    // remove your object here
+    cb();
+  };
+});
 </pre>
 <h5> collectionGET($) </h5>
 <p>
