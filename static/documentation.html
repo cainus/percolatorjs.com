@@ -138,7 +138,6 @@
           </p>
           <li class="nav-sub-header"><a href="#context-uri">$.uri</a></li>
           <p class="nav-sub-header">
-             <a href="#context-uri-created">created</a> &nbsp; 
              <a href="#context-uri-absolute">absolute</a> &nbsp;
              <a href="#context-uri-child">child</a> &nbsp;
              <a href="#context-uri-get">get</a> &nbsp;
@@ -149,11 +148,26 @@
              <a href="#context-uri-pathEnd">pathEnd</a> &nbsp;
              <a href="#context-uri-pathJoin">pathJoin</a> &nbsp;
              <a href="#context-uri-query">query</a> &nbsp;
-             <a href="#context-uri-queryString">queryString</a> &nbsp;
+             <a href="#context-uri-querystring">queryString</a> &nbsp;
              <a href="#context-uri-self">self</a> &nbsp;
              <a href="#context-uri-urlDecode">urlDecode</a> &nbsp;
              <a href="#context-uri-urlEncode">urlEncode  </a> &nbsp;
           </p>
+          <li class="nav-sub-header" ><a href="#context-json">$.json</a></li>
+          <p class="nav-sub-header">
+             <a href="#context-json-toString">toString</a> &nbsp;
+             <a href="#context-json-toObject">toObject</a> &nbsp;
+             <a href="#context-json-property">property</a> &nbsp;
+             <a href="#context-json-link">link</a> &nbsp;
+             <a href="#context-json-send">send</a> &nbsp;
+          </p>
+          <li class="nav-sub-header" ><a href="#context-jsoncollection">$.jsonCollection</a></li>
+          <p class="nav-sub-header">
+             <a href="#context-jsoncollection-each">each</a> &nbsp;
+             <a href="#context-jsoncollection-linkEach">linkEach</a> &nbsp;
+          </p>
+          <li class="nav-sub-header" ><a href="#context-onJson">$.onJson</a></li>
+          <li class="nav-sub-header" ><a href="#context-onBody">$.onBody</a></li>
           <li class="nav-header" ><a href="#jsonmodule">JsonModule</a></li>
 
           <p class="nav-sub-header">
@@ -167,7 +181,7 @@
              <a href="#jsonmodule-memberGET">memberGET</a> &nbsp;
              <a href="#jsonmodule-updateSchema">updateSchema</a> &nbsp;
              <a href="#jsonmodule-createSchema">createSchema</a> &nbsp;
-             <a href="#sjsonmodule-chema">schema</a> &nbsp;
+             <a href="#jsonmodule-schema">schema</a> &nbsp;
           </p>
 
           <li class="nav-header" ><a href="#advancedrouting">Advanced Routing</a> </li>
@@ -389,16 +403,19 @@ The "Hello World" example should be pretty straightforward, except it has a stra
 This is the context object.  The context object is basically just a holder for all the things your request 
 handler will care about.  You can name it whatever you want really, but '$' is a nice short name that you're
 unlikely to have a clash with in a server-side environment.  It has a number of interesting properties:
-
+<section id="context-req"></section>
 <h5>$.req</h5>
+<section id="context-res"></section>
 This is the unaltered <a href="http://nodejs.org/api/http.html#http_class_http_serverrequest">request object</a> from the node.js standard library.
-
 <h5>$.res</h5>
 This is the unaltered <a href="http://nodejs.org/api/http.html#http_class_http_serverrequest">response object</a> from the node.js standard library.
 
+<section id="context-app"></section>
 <h5>$.app</h5>
 This is the app object that you passed in the constructor to Percolator.
 
+<section id="context-status">
+</section>
 <h5>$.status</h5>
 <p>
 The status module is automatically attached to your resource handler at request time. It is just a bunch of helper functions for dealing with response statuses.
@@ -425,6 +442,7 @@ Here are the functions that it makes available in your method handler:
 </p>
 
 <h6>Redirect scenarios</h6>
+<section id="context-status-created">
 <dl>
   <dt>
 $.status.created(redirectUrl);
@@ -433,7 +451,9 @@ $.status.created(redirectUrl);
 This method is used for HTTP STATUS 201 scenarios when the server has just created a resource successfully so that the server can tell the client where to find it. It sets the status to 201 and sets the 'Location' header to the redirectUrl.
   </dd>
 </dl>
+</section>
 
+<section id="context-status-movedPermanently">
 <dl>
   <dt>
     $.status.movedPermanently(redirectUrl);
@@ -442,7 +462,9 @@ This method is used for HTTP STATUS 201 scenarios when the server has just creat
     This method is used for HTTP STATUS 301 scenarios where a resource has been permanently moved somewhere else so the server can tell the client where to find it. It sets the status to 301 and sets the 'Location' header to the redirectUrl.
   </dd>
 </dl>
+</section>
 
+<section id="context-status-redirect">
 <dl>
   <dt>
     $.status.redirect(redirectUrl);
@@ -451,6 +473,7 @@ This method is used for HTTP STATUS 201 scenarios when the server has just creat
     This is just an alias of movedPermanently()
   </dd>
 </dl>
+</section>
 
 <h6>Success responses</h6>
 <p>
@@ -460,6 +483,7 @@ This method is used for HTTP STATUS 201 scenarios when the server has just creat
 201 Created statuses are described in the redirect section above.
 </p>
 
+<section id="context-status-accepted">
 <dl>
   <dt>
     $.status.accepted();
@@ -468,6 +492,7 @@ This method is used for HTTP STATUS 201 scenarios when the server has just creat
     Used to indicate that a response has been accepted, but not yet processed, this response will emit a "202 Accepted" status.
   </dd>
 </dl>
+</section>
 
 <h6>Error Scenarios</h6>
 All of the error scenarios are handled similarly and attempt to show a response body that indicates the error that occurred as well. The status code will be set on the response as well as in that response body.
@@ -486,6 +511,7 @@ Output:<br />
 </code>
 <h6>Error response methods:</h6>
 
+<section id="context-status-badRequest">
 <dl>
   <dt>
     $.status.badRequest([detail])
@@ -496,7 +522,9 @@ Output:<br />
     </code>
   </dd>
 </dl>
+</section>
 
+<section id="context-status-unauthenticated">
 <dl>
   <dt>
     $.status.unauthenticated([detail])
@@ -507,7 +535,9 @@ Output:<br />
     </code>
   </dd>
 </dl>
+</section>
 
+<section id="context-status-forbidden">
 <dl>
   <dt>
       $.status.forbidden([detail])
@@ -518,7 +548,9 @@ Output:<br />
     </code>
   </dd>
 </dl>
+</section>
 
+<section id="context-status-notFound">
 <dl>
   <dt>
       $.status.notFound([detail])
@@ -529,6 +561,9 @@ Output:<br />
     </code>
   </dd>
 </dl>
+</section>
+
+<section id="context-status-methodNotAllowed">
 
 <dl>
   <dt>
@@ -540,7 +575,9 @@ Output:<br />
     </code>
   </dd>
 </dl>
+</section>
 
+<section id="context-status-notAcceptable">
 <dl>
   <dt>
       $.status.notAcceptable([detail])
@@ -551,8 +588,10 @@ Output:<br />
     </code>
   </dd>
 </dl>
+</section>
 
 
+<section id="context-status-conflict">
 <dl>
   <dt>
       $.status.conflict([detail])
@@ -563,7 +602,9 @@ Output:<br />
     </code>
   </dd>
 </dl>
+</section>
 
+<section id="context-status-gone">
 <dl>
   <dt>
       $.status.gone([detail])
@@ -574,7 +615,9 @@ Output:<br />
     </code>
   </dd>
 </dl>
+</section>
 
+<section id="context-status-lengthRequired">
 <dl>
   <dt>
       $.status.lengthRequired([detail])
@@ -585,7 +628,9 @@ Output:<br />
     </code>
   </dd>
 </dl>
+</section>
 
+<section id="context-status-preconditionFailed">
 <dl>
   <dt>
       $.status.preconditionFailed([detail])
@@ -596,7 +641,9 @@ Output:<br />
     </code>
   </dd>
 </dl>
+</section>
 
+<section id="context-status-requestEntityTooLarge">
 <dl>
   <dt>
       $.status.requestEntityTooLarge([detail])
@@ -607,7 +654,9 @@ Output:<br />
     </code>
   </dd>
 </dl>
+</section>
 
+<section id="context-status-requestUriTooLong">
 <dl>
   <dt>
 $.status.requestUriTooLong([detail])
@@ -618,7 +667,9 @@ $.status.requestUriTooLong([detail])
     </code>
   </dd>
 </dl>
+</section>
 
+<section id="context-status-unsupportedMediaType">
 <dl>
   <dt>
 $.status.unsupportedMediaType([detail])
@@ -629,7 +680,9 @@ $.status.unsupportedMediaType([detail])
     </code>
   </dd>
 </dl>
+</section>
 
+<section id="context-status-unprocessableEntity">
 <dl>
   <dt>
 $.status.unprocessableEntity([detail])
@@ -640,7 +693,9 @@ $.status.unprocessableEntity([detail])
     </code>
   </dd>
 </dl>
+</section>
 
+<section id="context-status-tooManyRequests">
 <dl>
   <dt>
 $.status.tooManyRequests([detail])
@@ -651,7 +706,9 @@ $.status.tooManyRequests([detail])
     </code>
   </dd>
 </dl>
+</section>
 
+<section id="context-status-internalServerError">
 <dl>
   <dt>
 $.status.internalServerError([detail])
@@ -662,7 +719,9 @@ $.status.internalServerError([detail])
     </code>
   </dd>
 </dl>
+</section>
 
+<section id="context-status-notImplemented">
 <dl>
   <dt>
 $.status.notImplemented([detail])
@@ -673,7 +732,9 @@ $.status.notImplemented([detail])
     </code>
   </dd>
 </dl>
+</section>
 
+<section id="context-status-badGateway">
 <dl>
   <dt>
 $.status.badGateway([detail])
@@ -684,7 +745,9 @@ $.status.badGateway([detail])
     </code>
   </dd>
 </dl>
+</section>
 
+<section id="context-status-serviceUnavailable">
 <dl>
   <dt>
       $.status.serviceUnavailable([detail])
@@ -695,7 +758,9 @@ $.status.badGateway([detail])
     </code>
   </dd>
 </dl>
+</section>
 
+<section id="context-status-gatewayTimeout">
 <dl>
   <dt>
       $.status.gatewayTimeout([detail])
@@ -706,8 +771,10 @@ $.status.badGateway([detail])
     </code>
   </dd>
 </dl>
+</section>
 
 
+<section id="context-uri">
 <h5>$.uri</h5>
 <p>
 Each method you define has access to a 'uri' module that understands the context of each particular request that it's used in. The module makes a number of convenient methods available for dealing with uri's and generally making the parsing of uri's simpler and the creation of new uri's simple. Here are example usages:
@@ -722,6 +789,7 @@ server.route('/', {  GET : function($){
                             }});
 </pre>
 <h6>Api specifics:</h6>
+<section id="context-uri-absolute">
 <dl>
   <dt>
     $.uri.absolute(path)
@@ -733,7 +801,9 @@ $.uri.absolute("/somepath");
 // returns "http://hostname.com/somepath" </pre>
   </dd>
 </dl>
+</section>
 
+<section id="context-uri-child">
 <dl>
   <dt>
 $.uri.child(suffix);
@@ -747,7 +817,9 @@ $.uri.child('song');
 </pre>
   </dd>
 </dl>
+</section>
 
+<section id="context-uri-get">
 <dl>
   <dt>
 $.uri.get(path [, variableHash]);
@@ -760,7 +832,9 @@ $.uri.get('/artist/:artist', {artist : 1234});
 </pre>
   </dd>
 </dl>
+</section>
 
+<section id="context-uri-param">
 <dl>
   <dt>
 $.uri.param(name)
@@ -774,7 +848,9 @@ $.uri.param("song");
 </pre>
   </dd>
 </dl>
+</section>
 
+<section id="context-uri-params">
 <dl>
   <dt>
 $.uri.params()
@@ -790,6 +866,9 @@ $.uri.params()
 </pre>
   </dd>
 </dl>
+</section>
+
+<section id="context-uri-parent">
 <dl>
   <dt>
 $.uri.parent();
@@ -802,8 +881,10 @@ $.uri.parent("http://asdf.com/asdf");
 </pre>
   </dd>
 </dl>
+</section>
 
 
+<section id="context-uri-parse">
 <dl>
   <dt>
 $.uri.parse([url]);
@@ -823,7 +904,9 @@ $.uri.parse();
 </pre>
   </dd>
 </dl>
+</section>
 
+<section id="context-uri-pathEnd">
 <dl>
   <dt>
 $.uri.pathEnd([url]);
@@ -837,7 +920,9 @@ $.uri.pathEnd('http://asdf.com/a/b/c');
 </pre>
   </dd>
 </dl>
+</section>
 
+<section id="context-uri-pathJoin">
 <dl>
   <dt>
 $.uri.pathJoin(...);
@@ -850,7 +935,9 @@ returns '/asdf/qwer/tyui/1234'
 </pre>
   </dd>
 </dl>
+</section>
 
+<section id="context-uri-query">
 <dl>
   <dt>
 $.uri.query([url]);
@@ -864,8 +951,10 @@ $.uri.query('http://asdf.com/path/?this=is&a=test');
 </pre>
   </dd>
 </dl>
+</section>
 
 
+<section id="context-uri-querystring">
 <dl>
   <dt>
 $.uri.queryString(queryHash);
@@ -878,7 +967,9 @@ $.uri.queryString({ this:is, a:test }});
 </pre>
   </dd>
 </dl>
+</section>
 
+<section id="context-uri-self">
 <dl>
   <dt>
 $.uri.self()
@@ -891,7 +982,9 @@ $.uri.self();
 </pre>
   </dd>
 </dl>
+</section>
 
+<section id="context-uri-urlDecode">
 <dl>
   <dt>
 $.uri.urlDecode(someEncodedStr)
@@ -904,7 +997,9 @@ $.uri.urlDecode("this%20is%20a%20test");
 </pre>
   </dd>
 </dl>
+</section>
 
+<section id="context-uri-urlEncode">
 <dl>
   <dt>
 $.uri.urlEncode(somestr);
@@ -917,13 +1012,17 @@ $.uri.urlEncode("this is a test");
 </pre>
   </dd>
 </dl>
+</section><!-- / context-uri-urlEncode -->
+</section><!-- / context-uri -->
 
+<section id="context-json">
 <h5>$.json</h5>
 
 $.json is a function that takes an object for later output as json.  It returns a "HyperJSON" object which is just 
 a fluid (chained) interfaced for creating json with links easily.
 
 
+<section id="context-json-toString">
 <dl>
   <dt>
      toString()
@@ -936,7 +1035,9 @@ $.json({some : "test"}).toString();
 </pre>
   </dd>
 </dl>
+</section>
 
+<section id="context-json-toObject">
 <dl>
   <dt>
      toObject()
@@ -949,7 +1050,9 @@ $.json({some : "test"}).toObject();
 </pre>
   </dd>
 </dl>
+</section>
 
+<section id="context-json-property">
 <dl>
   <dt>
      property(name, value)
@@ -962,7 +1065,9 @@ $.json({some : "test"}).property("also", "this").toObject();
 </pre>
   </dd>
 </dl>
+</section>
 
+<section id="context-json-link">
 <dl>
   <dt>
      link(rel, href, [options])
@@ -984,7 +1089,9 @@ $.json({some : "test"}).link("somerel", "http://some.example.com", {method:"POST
 </pre>
   </dd>
 </dl>
+</section>
 
+<section id="context-json-send">
 <dl>
   <dt>
      send()
@@ -996,7 +1103,9 @@ $.json({some : "test"}).send();
 </pre>
   </dd>
 </dl>
+</section>  <!-- /$.json -->
 
+<section id="context-jsoncollection">
 <h5>$.jsonCollection</h5>
 This object is meant for creating and manipulating json "collections" which are useful in general when you want
 to output a list of things in json.  It has all the same capibilities as $.json, but it also adds some additional
@@ -1036,6 +1145,7 @@ $.jsonCollection([{someitem : "1234"],{someotheritem : 4567}]).toObject();
 
 
 
+<section id="context-jsoncollection-each">
 <dl>
   <dt>
      each(cb)
@@ -1053,8 +1163,10 @@ $.jsonCollection([{some:"test"}]).each(function(item){return item + "2";}).toObj
 <!-- TODO verify the output of these.  Add parent/self links as well. -->
   </dd>
 </dl>
+</section>
 
 
+<section id="context-jsoncollection-linkEach">
 <dl>
   <dt>
      linkEach(rel, cb)
@@ -1090,9 +1202,12 @@ $.jsonCollection([{some : "test"}]).linkEach('plustwo', function(item){return 'h
 <!-- TODO verify the output of these.  Add parent/self links as well. -->
   </dd>
 </dl>
+</section>
+</section>
 
 
 
+<section id="context-onJson">
 <h5>$.onJson([schema], cb)</h5>
 <p>
 $.onJson() is used for handling a request where the request body is json (normally a PUT or POST).  It 
@@ -1132,10 +1247,12 @@ $.onJson(schema, function(err, obj){
   console.log('object: ', obj);
 });
 </pre>
+</section>
 
 
 
 
+<section id="context-onBody">
 <h5>$.onBody(cb)</h5>
 <p>
 $.onBody() is used for handling the streaming of non-json request bodies.
@@ -1167,6 +1284,7 @@ NOTE: If you're expecting json, then you should normally use $.onJson() instead 
 
 -->
 </section>
+
 <section id="jsonmodule">
 <h3>JsonModule</h3>
 <p>
@@ -1210,6 +1328,8 @@ server.route('/myCollection/:memberid', module.wildcard);
 
 </p>
 
+<section id="jsonmodule-list">
+</section>
 <h5>list($, cb)</h5>
 <p>
 Implement the list() function to provide the module with all
@@ -1226,6 +1346,7 @@ var module = new JsonModule({
   }
 });
 </pre>
+<section id="jsonmodule-fetch">
 <h5> fetch($, id, cb) </h5>
 <p>
 Implement the fetch() function to provide the GET handler
@@ -1267,7 +1388,9 @@ var module = new JsonModule({
   }
 });
 </pre>
+</section>
 
+<section id="jsonmodule-create">
 <h5> create($, object, cb) </h5>
 <p>
 The create() function is used for creating new resources via
@@ -1300,6 +1423,8 @@ var module = new JsonModule({
   }
 });
 </pre>
+</section>
+<section id="jsonmodule-update">
 <h5> update($, id, obj, cb) </h5>
 <p>
 The update() function is used for updating existing resources
@@ -1329,6 +1454,8 @@ var module = new JsonModule({
   };
 });
 </pre>
+</section>
+<section id="jsonmodule-upsert">
 <h5> upsert($, id, obj, cb) </h5>
 <p>
 In general, "upsert" is short for "update if existing, and insert
@@ -1368,6 +1495,8 @@ var module = new JsonModule({
   };
 });
 </pre>
+</section>
+<section id="jsonmodule-destroy">
 <h5> destroy($, id, cb) </h5>
 <p>
 The destroy() function is used for removing existing resources
@@ -1395,37 +1524,49 @@ var module = new JsonModule({
   };
 });
 </pre>
+</section>
+<section id="jsonmodule-collectionGET">
 <h5> collectionGET($) </h5>
 <p>
 TODO
 </p>
 <pre class="sh_javascript">
 </pre>
+</section>
+<section id="jsonmodule-memberGET">
 <h5> memberGET($) </h5>
 <p>
 TODO
 </p>
 <pre class="sh_javascript">
 </pre>
+</section>
+<section id="jsonmodule-updateSchema">
 <h5> updateSchema </h5>
 <p>
 TODO
 </p>
 <pre class="sh_javascript">
 </pre>
+</section>
+<section id="jsonmodule-createSchema">
 <h5> createSchema </h5>
 <p>
 TODO
 </p>
 <pre class="sh_javascript">
 </pre>
+</section>
+<section id="jsonmodule-schema">
 <h5> schema </h5>
 <p>
 TODO
 </p>
 <pre class="sh_javascript">
 </pre>
-</section>
+</section> <!-- /jsonmodule-schema -->
+</section> <!-- /jsonmodule -->
+
 <section id="advancedrouting">
 <h3>Advanced Routing</h3>
 <h5>Hello World Refactored:</h5>
