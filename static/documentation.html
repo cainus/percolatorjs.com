@@ -10,14 +10,45 @@
 
     <!-- Le styles -->
     <link href="css/bootstrap.css" rel="stylesheet">
-    <style type="text/css">
-      body {
-        padding-top: 60px;
-        padding-bottom: 40px;
-      }
-    </style>
     <link href="css/bootstrap-responsive.css" rel="stylesheet">
     <link href="css/sh_acid.min.css" rel="stylesheet">
+      <!-- body {
+        padding-top: 60px;
+        padding-bottom: 40px;
+      } 
+
+      .nav-list > li > a {
+        padding: 0px 0px 0px 0px;
+        margin-left : 10px;
+      }
+
+-->
+    <style type="text/css">
+      h2 {
+        margin-top : 50px;
+      }
+      .nav-header {
+        padding-top: 5px;
+        padding-bottom: 5px;
+        margin-top: 0px;
+        margin-bottom: 0px;
+
+      }
+      .nav-sub-header {
+        font-size: 12px;
+        margin-left : 15px;
+        margin-top: 0px;
+        margin-bottom: 0px;
+      }
+      p.nav-sub-header {
+        margin-left : 30px;
+      }
+      li.nav-header {
+        margin-top : 0px;
+        padding-top : 0px;
+        padding-bottom : 0px;
+      }
+    </style>
 
     <!-- Le HTML5 shim, for IE6-8 support of HTML5 elements -->
     <!--[if lt IE 9]>
@@ -34,7 +65,7 @@
     <script type="text/javascript" src="/js/sh_javascript.min.js"></script>
   </head>
 
-  <body  onload="sh_highlightDocument();">
+  <body  onload="sh_highlightDocument();" >
 
     <div class="navbar navbar-fixed-top">
       <div class="navbar-inner">
@@ -53,21 +84,104 @@
               <li class="active"><a href="documentation.html">Documentation</a></li>
             </ul>
           </div><!--/.nav-collapse -->
-        </div>
-      </div>
+        </div><!-- /container -->
+      </div><!-- /navbar-inner -->
+    </div><!-- /navbar -->
+    <div class="container" id="topspacer">
+
     </div>
 
     <div class="container">
-      <div >
-        <h3>
+        <h2>
         Documentation
-        </h3>
-     <div>
-      <h4>Installation</h4>
-      <code>npm install Percolator</code>
-      <h4>Running Tests</h4>
-      <code>make test</code>
-      <h4>Hello World Quick Start:</h4>
+        </h2>
+        <p></p>
+        <ul class="nav nav-list">
+          <li class="nav-header"><a href="#installation">Installation</a></li>
+          <li class="nav-header" ><a href="#runningtests">Running Tests</a></li>
+          <li class="nav-header" ><a href="#helloworld">Hello World Quick Start</a></li>
+          <li class="nav-header"><a href="#server">The Percolator Server Object</a></li>
+          <p class="nav-sub-header">
+            <a href="#server-route">route</a>&nbsp;
+            <a href="#server-listen">listen</a>&nbsp;
+            <a href="#server-onrequest">onRequest</a>&nbsp;
+          </p>
+          <li class="nav-header" ><a href="#context">The Context Object ($)</a></li>
+          <li class="nav-sub-header"><a href="#context-req">$.req</a></li>
+          <li class="nav-sub-header"><a href="#context-res">$.res</a></li>
+          <li class="nav-sub-header"><a href="#context-app">$.app</a></li>
+          <li class="nav-sub-header"><a href="#context-status">$.status</a></li>
+          <p class="nav-sub-header">
+            <a href="#context-status-created">created</a>&nbsp;
+            <a href="#context-status-movedPermanently">movedPermanently</a>&nbsp;
+            <a href="#context-status-redirect">redirect</a>&nbsp;
+            <a href="#context-status-badRequest">badRequest</a>&nbsp;
+            <a href="#context-status-unauthenticated">unauthenticated</a>&nbsp;
+            <a href="#context-status-forbidden">forbidden</a>&nbsp;
+            <a href="#context-status-notFound">notFound</a>&nbsp;
+            <a href="#context-status-methodNotAllowed">methodNotAllowed</a>&nbsp;
+            <a href="#context-status-notAcceptable">notAcceptable</a>&nbsp;
+            <a href="#context-status-conflict">conflict</a>&nbsp;
+            <a href="#context-status-gone">gone</a>&nbsp;
+            <a href="#context-status-lengthRequired">lengthRequired</a>&nbsp;
+            <a href="#context-status-preconditionFailed">preconditionFailed</a>&nbsp;
+            <a href="#context-status-requestEntityTooLarge">requestEntityTooLarge</a>&nbsp;
+            <a href="#context-status-requestUriTooLong">requestUriTooLong</a>&nbsp;
+            <a href="#context-status-unsupportedMediaType">unsupportedMediaType</a>&nbsp;
+            <a href="#context-status-unprocessableEntity">unprocessableEntity</a>&nbsp;
+            <a href="#context-status-tooManyRequests">tooManyRequests</a>&nbsp;
+            <a href="#context-status-internalServerError">internalServerError</a>&nbsp;
+            <a href="#context-status-notImplemented">notImplemented</a>&nbsp;
+            <a href="#context-status-badGateway">badGateway</a>&nbsp;
+            <a href="#context-status-serviceUnavailable">serviceUnavailable</a>&nbsp;
+            <a href="#context-status-gatewayTimeout">gatewayTimeout</a>
+          </p>
+          <li class="nav-sub-header"><a href="#context-uri">$.uri</a></li>
+          <p class="nav-sub-header">
+             <a href="#context-uri-created">created</a> &nbsp; 
+             <a href="#context-uri-absolute">absolute</a> &nbsp;
+             <a href="#context-uri-child">child</a> &nbsp;
+             <a href="#context-uri-get">get</a> &nbsp;
+             <a href="#context-uri-param">param</a> &nbsp;
+             <a href="#context-uri-params">params</a> &nbsp;
+             <a href="#context-uri-parent">parent</a> &nbsp;
+             <a href="#context-uri-parse">parse</a> &nbsp;
+             <a href="#context-uri-pathEnd">pathEnd</a> &nbsp;
+             <a href="#context-uri-pathJoin">pathJoin</a> &nbsp;
+             <a href="#context-uri-query">query</a> &nbsp;
+             <a href="#context-uri-queryString">queryString</a> &nbsp;
+             <a href="#context-uri-self">self</a> &nbsp;
+             <a href="#context-uri-urlDecode">urlDecode</a> &nbsp;
+             <a href="#context-uri-urlEncode">urlEncode  </a> &nbsp;
+          </p>
+          <li class="nav-header" ><a href="#jsonmodule">JsonModule</a></li>
+
+          <p class="nav-sub-header">
+             <a href="#jsonmodule-list">list</a> &nbsp;
+             <a href="#jsonmodule-fetch">fetch</a> &nbsp;
+             <a href="#jsonmodule-create">create</a> &nbsp;
+             <a href="#jsonmodule-update">update</a> &nbsp;
+             <a href="#jsonmodule-upsert">upsert</a> &nbsp;
+             <a href="#jsonmodule-destroy">destroy</a> &nbsp;
+             <a href="#jsonmodule-collectionGET">collectionGET</a> &nbsp;
+             <a href="#jsonmodule-memberGET">memberGET</a> &nbsp;
+             <a href="#jsonmodule-updateSchema">updateSchema</a> &nbsp;
+             <a href="#jsonmodule-createSchema">createSchema</a> &nbsp;
+             <a href="#sjsonmodule-chema">schema</a> &nbsp;
+          </p>
+
+          <li class="nav-header" ><a href="#advancedrouting">Advanced Routing</a> </li>
+        </ul>
+      <section id="installation">
+        <h3>Installation</h3>
+        <code>npm install Percolator</code>
+      </section>
+      <section id="runningtests">
+        <h3>Running Tests</h3>
+        <code>make test</code>
+      </section>
+      <section id="helloworld">
+        <h3>Hello World Quick Start:</h3>
 
 <ul>
 <li> Create a <code>server.js</code> in your project directory, and copy this code below into it:</li>
@@ -110,9 +224,10 @@ in another endpoint, and where everything that can be done with the API is descr
 itself.
 </li>
 </ul>
+</section>
 
 <div class="alert alert-success">
-  <h4>Why should I care about Hypermedia??!?</h4>
+  <h3>Why should I care about Hypermedia??!?</h3>
   <p>
   Because Hypermedia APIs are pretty awesome for the people using your API.
   </p>
@@ -139,9 +254,10 @@ itself.
   with proper caching and compression (gzip), there should be little to no cost to your 
   clients' performance or bandwidth.
   </p>
-</div>
+</div> <!-- /alert -->
 
-<h4>The Percolator Server Object</h4>
+<section id="server">
+<h3>The Percolator Server Object</h3>
 Any Percolator objects you create are just http servers (based on 
 <a href="https://github.com/cainus/oneone">oneone</a>) with a bunch of helpers
 for making JSON APIs more easily.
@@ -172,8 +288,8 @@ great for shared configuration, database objects, etc.
 
 <p>You're obviously going to want to limit the number of app object variables that you add beyond the necessary ones, but
 certain types of objects might make sense in that shared space.</p>
-    </div>
 
+<section id="server-route">
 <h5>route(routeString, resourceObject)</h5>
 <p>
 The route() method of the server takes two parameters, the route string and the resource object.
@@ -215,8 +331,8 @@ server.route('/', {  GET : function($){
 
 Note that because resource objects are just objects, you can load them from a file as modules, or create
 components that you re-use for different modules.
-
-
+</section>
+<section id="server-listen">
 <h5>listen([cb])</h5>
 Call listen() on the server to start it listening.  The default port (unless overridden by 
 the app object) is 3000.
@@ -229,7 +345,8 @@ server.listen(function(err){
   console.log('server is listening on port ', server.port);
 });
 </pre>
-
+</section>
+<section id="server-onrequest">
 <h5>onRequest(cb)</h5>
 <p>
 The onRequest() method takes a callback as its only parameter.  The callback is called when
@@ -264,8 +381,10 @@ server.onRequest(function(handler, $, cb){
   cb(context);
 });
 </pre>
-
-<h4>The Context Object ($)</h4>
+</section>
+</section>
+<section id="context">
+<h3>The Context Object ($)</h3>
 The "Hello World" example should be pretty straightforward, except it has a strange dollar sign ($) in it.  
 This is the context object.  The context object is basically just a holder for all the things your request 
 handler will care about.  You can name it whatever you want really, but '$' is a nice short name that you're
@@ -474,17 +593,6 @@ Output:<br />
   <dd>
     <code>
         {"type":412,"message":"Precondition Failed"}
-    </code>
-  </dd>
-</dl>
-
-<dl>
-  <dt>
-      $.status.requestEntityTooLarge([detail])
-  </dt>
-  <dd>
-    <code>
-        {"type":413,"message":"'Request Entity Too Large"}
     </code>
   </dd>
 </dl>
@@ -1050,7 +1158,7 @@ NOTE: If you're expecting json, then you should normally use $.onJson() instead 
 </p>
 
 <!--
-<h4>Resource Objects</h4>
+<h3>Resource Objects</h3>
 // TODO
 // authenticate
 // basicAuthenticate
@@ -1058,7 +1166,9 @@ NOTE: If you're expecting json, then you should normally use $.onJson() instead 
 // handler and wildcard
 
 -->
-<h4>JsonModule</h4>
+</section>
+<section id="jsonmodule">
+<h3>JsonModule</h3>
 <p>
 A JsonModule is a module that implements handlers for
 a json collection, and all its members.  It allows you 
@@ -1315,8 +1425,9 @@ TODO
 </p>
 <pre class="sh_javascript">
 </pre>
-
-<h4>Advanced Routing</h4>
+</section>
+<section id="advancedrouting">
+<h3>Advanced Routing</h3>
 <h5>Hello World Refactored:</h5>
 
 <p>Percolator also allows a more advanced style of routing that lets you load 
@@ -1370,12 +1481,7 @@ similar handler) and it will respond to http://localhost:3000/api/hello .  The a
 of routing is that all your resources can be in separate files so that your project can be more easily
 organized.
 </p>
-    </div>
-
-
-    <!--  END DOCS --> 
-      </div>
-
+</section>
     </div> <!-- /container -->
 
     <!-- Le javascript
