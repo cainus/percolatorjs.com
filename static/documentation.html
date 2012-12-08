@@ -1122,6 +1122,14 @@ $.jsonCollection({someitem : "1234",someotheritem : 4567}).toObject();
   _items : {
     someitem : "1234",
     someotheritem : "4567"
+  },
+  _links : {
+    self: {
+      href: "http://example.com/api/someCollection"
+    },
+    parent: {
+      href: "http://example.com/api"
+    }
   }
 }
 </pre>
@@ -1130,13 +1138,21 @@ $.jsonCollection({someitem : "1234",someotheritem : 4567}).toObject();
 
 <pre class="sh_javascript">
 // array version
-$.jsonCollection([{someitem : "1234"],{someotheritem : 4567}]).toObject();
+$.jsonCollection([{someitem : "1234"},{someotheritem : 4567}]).toObject();
 // returns:
 {
   _items : [
     {someitem : "1234"},
     {someotheritem : "4567"}
-  ]
+  ],
+  _links : {
+    self: {
+      href: "http://example.com/api/someCollection"
+    },
+    parent: {
+      href: "http://example.com/api"
+    }
+  }
 }
 
 </pre>
@@ -1156,9 +1172,37 @@ $.jsonCollection([{someitem : "1234"],{someotheritem : 4567}]).toObject();
     with the return value 
     <pre class="sh_javascript">
 $.jsonCollection({some : "test"}).each(function(item){return item + "2";}).toObject();
-// returns {_items : {some:"test2"}}
+// returns...
+{
+  _items : {
+      some: "test2"
+  },
+  _links : {
+    self: {
+      href: "http://example.com/api/someCollection"
+    },
+    parent: {
+      href: "http://example.com/api"
+    }
+  }
+}
+</pre>
+    <pre class="sh_javascript">
 $.jsonCollection([{some:"test"}]).each(function(item){return item + "2";}).toObject();
-// returns {_items:[{some:"test2"}]}
+// returns...
+{
+  _items : [
+    { some: "test2" }
+  ],
+  _links : {
+    self: {
+      href: "http://example.com/api/someCollection"
+    },
+    parent: {
+      href: "http://example.com/api"
+    }
+  }
+}
 </pre>
 <!-- TODO verify the output of these.  Add parent/self links as well. -->
   </dd>
@@ -1183,27 +1227,52 @@ $.jsonCollection([{some:"test"}]).each(function(item){return item + "2";}).toObj
     only parameter and replaces that item with the return value 
 <pre class="sh_javascript">
 $.jsonCollection({some : "test"}).linkEach('plustwo', function(item){return 'http://server.com/' + item + "2";}).toObject();
-// returns: 
+// returns...
 {
   _items : {
-    some:"test2"
+    some: "test",
+    _links : {
+      plustwo : {
+        href : 'http://server.com/test2'
+      }
+    }
+  },
+  _links : {
+    self: {
+      href: "http://example.com/api/someCollection"
+    },
+    parent: {
+      href: "http://example.com/api"
+    }
   }
 }
 </pre>
 <pre class="sh_javascript">
 $.jsonCollection([{some : "test"}]).linkEach('plustwo', function(item){return 'http://server.com/' + item['some'] + "2";}).toObject();
-// returns 
+// returns...
 {
   _items : [
-    { some:"test2"}
-  ]
+    some: "test",
+    _links : {
+      plustwo : {
+        href : 'http://server.com/test2'
+      }
+    }
+  ],
+  _links : {
+    self: {
+      href: "http://example.com/api/someCollection"
+    },
+    parent: {
+      href: "http://example.com/api"
+    }
+  }
 }
 </pre>
-<!-- TODO verify the output of these.  Add parent/self links as well. -->
   </dd>
 </dl>
-</section>
-</section>
+</section><!-- jsonCollection-linkEach -->
+</section><!-- jsonCollection -->
 
 
 
@@ -1528,23 +1597,51 @@ var module = new JsonModule({
 <section id="jsonmodule-collectionGET">
 <h5> collectionGET($) </h5>
 <p>
-TODO
+The collectionGET() function is a way of completely handling the GET for the
+collection resource if you don't want the automatic handling that list()
+provides.  This usually shouldn't be necessary.  Also note that this
+is basically just an alias for jsonModule.handler.GET.
+
 </p>
 <pre class="sh_javascript">
+var module = new JsonModule({
+  collectionGET : function($){
+    $.json({"make":"your own response"}).send();
+  };
+});
 </pre>
 </section>
 <section id="jsonmodule-memberGET">
 <h5> memberGET($) </h5>
 <p>
-TODO
+The memberGET() function is a way of completely handling the GET for member
+resources (items in the collection) if you don't want the automatic
+handling that fetch() provides.  This usually shouldn't be necessary.
+Also note that this is basically just an alias for
+jsonModule.wildcard.GET.
+
 </p>
 <pre class="sh_javascript">
+var module = new JsonModule({
+  memberGET : function($){
+    $.json({"make":"your own response"}).send();
+  };
+});
 </pre>
 </section>
 <section id="jsonmodule-updateSchema">
 <h5> updateSchema </h5>
 <p>
-TODO
+The updateSchema property is a way to specify a 
+<a href="http://json-schema.org/">json schema object</a>
+that will be used to validate json used for updating the resource.  If
+you want the same validation for creating the resource as you want for
+updating it, you can just use the schema property instead.
+</p>
+<p>
+  The updateSchema object will also be used in the update link for the 
+individual collection member resource to show developers and machines
+how an update is validated.
 </p>
 <pre class="sh_javascript">
 </pre>
@@ -1552,7 +1649,16 @@ TODO
 <section id="jsonmodule-createSchema">
 <h5> createSchema </h5>
 <p>
-TODO
+The createSchema property is a way to specify a 
+<a href="http://json-schema.org/">json schema object</a>
+that will be used to validate json used for creating a resource.  If
+you want the same validation for creating the resource as you want for
+updating it, you can just use the schema property instead.
+</p>
+<p>
+  The createSchema object will also be used in the create link in the 
+collection resource to show developers and machines
+how a create (POST) is validated.
 </p>
 <pre class="sh_javascript">
 </pre>
@@ -1560,7 +1666,18 @@ TODO
 <section id="jsonmodule-schema">
 <h5> schema </h5>
 <p>
-TODO
+The schema property is a way to specify a 
+<a href="http://json-schema.org/">json schema object</a>
+that will be used to validate json used for creating or updating a 
+resource.  If you want different validations for creating the resource than
+you do for updating it, you can use the specific createSchema and updateSchema
+properties instead.
+</p>
+<p>
+  The schema object will also be used in the create link in the 
+collection resource and the update link in the individual collection
+member resource to show developers and machines how creates and updates 
+are validated.
 </p>
 <pre class="sh_javascript">
 </pre>
