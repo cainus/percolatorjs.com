@@ -268,6 +268,10 @@ itself.
   with proper caching and compression (gzip), there should be little to no cost to your 
   clients' performance or bandwidth.
   </p>
+  <p>
+    If you're still unconvinced, you can just pass <code>autoLink : false</code> to the
+    Percolator constructor, and no links will be added automatically.
+  </p>
 </div> <!-- /alert -->
 
 <section id="server">
@@ -294,11 +298,14 @@ great for shared configuration, database objects, etc.
 
 <p>Additionally, the constructor recognizes a few special properties of the app object:</p>
 
-<p><strong>protocol</strong> - 'http' or 'https'<br>
+<p>
+<strong>protocol</strong> - 'http' or 'https'<br>
 <strong>resourcePath</strong> - the url path that all the resource will be routed from (eg. Setting it to '/' will serve the 
   resources from <a href="http://yourdomain.com/">http://yourdomain.com/</a> while setting it to '/api' will serve the resources from 
   <a href="http://yourdomain.com/api">http://yourdomain.com/api</a> .<br>
 <strong>staticDir</strong> - The directory on the filesystem from which you will serve static content (use an absolute path!).<br><strong>port</strong> - the http port.  A low port like 80 will not work unless you run the app with root privileges.  </p>
+<strong>autoLink</strong> - A boolean that indicates whether or not to automatically add some links to your json payloads for you.  This value is optional, and the default is 'true', meaning that hyperlinks will be added automatically to your json payloads.<br>
+<strong>port</strong> - the http port.  A low port like 80 will not work unless you run the app with root privileges.  </p>
 
 <p>You're obviously going to want to limit the number of app object variables that you add beyond the necessary ones, but
 certain types of objects might make sense in that shared space.</p>
