@@ -388,14 +388,22 @@ app.post('/links', function(req, res){
 });
 
 app.put('/links/:id', function(req, res){
-  if (!req.body.url || !req.body.tags || !req.body.id){
-    return badRequestError(req, res, 'json failed schema validation.');
-  }
-  db.update(req.body.id, req.body, function(err){
+  db.findById(req.param('id'), function(err, foundObject){
     if (err){
-      return internalServerError(err);
+      if (err === 'Not Found'){
+        return notFoundError(req, res);
+      }
+      return internalServerError(req, res, err);
     }
-    res.send('');
+    if (!req.body.url || !req.body.tags || !req.body.id){
+      return badRequestError(req, res, 'json failed schema validation.');
+    }
+    db.update(req.body.id, req.body, function(err){
+      if (err){
+        return internalServerError(err);
+      }
+      res.send('');
+    });
   });
 });
 
@@ -419,7 +427,7 @@ console.log('Listening on port ', port);
             <h3>Percolator example</h3>
             <pre class="sh_javascript">
 var Percolator = require('Percolator').Percolator;
-var JsonModule = require('Percolator').JsonModule;
+var CRUDCollection = require('Percolator').CRUDCollection;
 var SomeDB = require('./SomeDB');
 
 var schema = {
@@ -440,7 +448,7 @@ var schema = {
   }
 };
 
-var linkCollection = new JsonModule({
+var linkCollection = new CRUDCollection({
 
   schema : schema,
 
@@ -473,16 +481,7 @@ var linkCollection = new JsonModule({
 
   list : function($, cb){
     $.app.db.find(function(err, objects){
-      if (err){
-        return $.status.internalServerError(err);
-      }
-      $.jsonCollection(objects)
-        .linkEach("self", function(item){
-          return $.uri.child(item.id);
-        })
-        .link("create", $.uri.self(), {method : 'POST', 
-                                       schema : schema })
-        .send();
+      return cb(err, objects);
     });
   },
 
