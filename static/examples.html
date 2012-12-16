@@ -201,9 +201,6 @@ With either example, the collection at /links will look like this:
     },
     "parent": {
       "href": "http://localhost:3000/"
-    },
-    "self": {
-      "href": "http://localhost:3000/links"
     }
   }
 }
@@ -224,9 +221,6 @@ With either example, an individual member of the collection at /links/{id} will 
   "_links": {
     "parent": {
       "href": "http://localhost:3000/links/"
-    },
-    "self": {
-      "href": "http://localhost:3000/links/12341234"
     }
   }
 }
@@ -329,9 +323,6 @@ app.get('/links', function(req, res){
         parent : {
           href : absoluteUrl(req, 
                              req.url.replace(/\/[^\/]+\/?$/, '/'))
-        },
-        self : {
-          href : absoluteUrl(req, req.url)
         }
       }
     };
@@ -359,9 +350,6 @@ app.get('/links/:id', function(req, res){
       parent : {
         href : absoluteUrl(req, 
                            req.url.replace(/\/[^\/]+\/?$/, '/'))
-      },
-      self : {
-        href : absoluteUrl(req, req.url)
       }
     };
     res.send(foundObject);
