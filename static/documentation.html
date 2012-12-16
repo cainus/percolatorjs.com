@@ -351,6 +351,20 @@ server.route('/', {  GET : function($){
                             }});
 </pre>
 
+Here it is with a POST handler as well:
+<pre class="sh_javascript">
+server.route('/', {
+                    GET : function($){
+                              $.json({message : 'Hello World!'}).send();
+                    },
+                    POST : function($){
+                      $.onJson(function(err, obj){
+                        $.json({posted:obj}).send();
+                      });
+                    }
+});
+</pre>
+
 Note that because resource objects are just objects, you can load them from a file as modules, or create
 components that you re-use for different modules.
 </section>
