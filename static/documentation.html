@@ -169,20 +169,20 @@
           </p>
           <li class="nav-sub-header" ><a href="#context-onJson">$.onJson</a></li>
           <li class="nav-sub-header" ><a href="#context-onBody">$.onBody</a></li>
-          <li class="nav-header" ><a href="#jsonmodule">JsonModule</a></li>
+          <li class="nav-header" ><a href="#crudCollection">CRUDCollection</a></li>
 
           <p class="nav-sub-header">
-             <a href="#jsonmodule-list">list</a> &nbsp;
-             <a href="#jsonmodule-fetch">fetch</a> &nbsp;
-             <a href="#jsonmodule-create">create</a> &nbsp;
-             <a href="#jsonmodule-update">update</a> &nbsp;
-             <a href="#jsonmodule-upsert">upsert</a> &nbsp;
-             <a href="#jsonmodule-destroy">destroy</a> &nbsp;
-             <a href="#jsonmodule-collectionGET">collectionGET</a> &nbsp;
-             <a href="#jsonmodule-memberGET">memberGET</a> &nbsp;
-             <a href="#jsonmodule-updateSchema">updateSchema</a> &nbsp;
-             <a href="#jsonmodule-createSchema">createSchema</a> &nbsp;
-             <a href="#jsonmodule-schema">schema</a> &nbsp;
+             <a href="#crudCollection-list">list</a> &nbsp;
+             <a href="#crudCollection-fetch">fetch</a> &nbsp;
+             <a href="#crudCollection-create">create</a> &nbsp;
+             <a href="#crudCollection-update">update</a> &nbsp;
+             <a href="#crudCollection-upsert">upsert</a> &nbsp;
+             <a href="#crudCollection-destroy">destroy</a> &nbsp;
+             <a href="#crudCollection-collectionGET">collectionGET</a> &nbsp;
+             <a href="#crudCollection-memberGET">memberGET</a> &nbsp;
+             <a href="#crudCollection-updateSchema">updateSchema</a> &nbsp;
+             <a href="#crudCollection-createSchema">createSchema</a> &nbsp;
+             <a href="#crudCollection-schema">schema</a> &nbsp;
           </p>
 
           <li class="nav-header" ><a href="#advancedrouting">Advanced Routing</a> </li>
@@ -1358,10 +1358,10 @@ NOTE: If you're expecting json, then you should normally use $.onJson() instead 
 -->
 </section>
 
-<section id="jsonmodule">
-<h3>JsonModule</h3>
+<section id="crudCollection">
+<h3>CRUDCollection</h3>
 <p>
-A JsonModule is a module that implements handlers for
+A CRUDCollection is a module that implements handlers for
 a json collection, and all its members.  It allows you 
 to implement just your CRUD (create, read, update, 
 delete) logic for the collection and its
@@ -1369,14 +1369,14 @@ members without having to deal with much HTTP/API logic at
 all.
 </p>
 
-<h5>Creating a JsonModule</h5>
+<h5>Creating a CRUDCollection</h5>
 
 <p>
 Here's how it's constructed:
 </p>
 <pre class="sh_javascript">
-var JsonModule = require('Percolator').JsonModule;
-var module = new JsonModule({
+var CRUDCollection = require('Percolator').CRUDCollection;
+var module = new CRUDCollection({
   // implementation strategy goes here!
 });
 </pre>
@@ -1401,25 +1401,25 @@ server.route('/myCollection/:memberid', module.wildcard);
 
 </p>
 
-<section id="jsonmodule-list">
+<section id="crudCollection-list">
 </section>
 <h5>list($, cb)</h5>
 <p>
 Implement the list() function to provide the module with all
 the items that should show up in the collections GET view.  
-JsonModule requires that either this function or collectionGET()
+CRUDCollection requires that either this function or collectionGET()
 is implemented to ensure that your collection is accessible via
 GET.
 </p>
 <pre class="sh_javascript">
-var module = new JsonModule({
+var module = new CRUDCollection({
   list : function($, cb){
     // generate the list to return for the collection view.
     cb(null, [{some : "object"}, {some : "otherobject"}]);
   }
 });
 </pre>
-<section id="jsonmodule-fetch">
+<section id="crudCollection-fetch">
 <h5> fetch($, id, cb) </h5>
 <p>
 Implement the fetch() function to provide the GET handler
@@ -1454,7 +1454,7 @@ members as well.
 </p>
 
 <pre class="sh_javascript">
-var module = new JsonModule({
+var module = new CRUDCollection({
   fetch : function($, id, cb){
     // get some item from your data source by the given id.
     cb(null, theObject);
@@ -1463,7 +1463,7 @@ var module = new JsonModule({
 </pre>
 </section>
 
-<section id="jsonmodule-create">
+<section id="crudCollection-create">
 <h5> create($, object, cb) </h5>
 <p>
 The create() function is used for creating new resources via
@@ -1473,7 +1473,7 @@ its URI in general) are server-generated and NOT client-provided.
 
 <p>
 Implement create() to allow this kind of object creation.  The
-JsonModule will do json parsing and validation for you (if you 
+CRUDCollection will do json parsing and validation for you (if you 
 supply a <strong>schema</strong> or a <strong>createSchema
 </strong>) and 
 it will respond with appropriate error messages automatically
@@ -1489,7 +1489,7 @@ the option of not calling the callback at all and instead
 responding however you want.
 </p>
 <pre class="sh_javascript">
-var module = new JsonModule({
+var module = new CRUDCollection({
   create : function($, object, cb){
     // store your object here
     cb();
@@ -1497,7 +1497,7 @@ var module = new JsonModule({
 });
 </pre>
 </section>
-<section id="jsonmodule-update">
+<section id="crudCollection-update">
 <h5> update($, id, obj, cb) </h5>
 <p>
 The update() function is used for updating existing resources
@@ -1505,7 +1505,7 @@ via PUT to the individual resource's existing URI.
 </p>
 <p>
 Implement update() to allow resources to be updated.  The 
-JsonModule will handle the json parsing and validation for you (
+CRUDCollection will handle the json parsing and validation for you (
 if you supply a <strong>schema</strong> or an 
 <strong>updateSchema</strong>) and it will respond with 
 appropriate error messages automatically in the case of failures.
@@ -1520,7 +1520,7 @@ the option of not calling the callback at all and instead
 responding however you want.
 </p>
 <pre class="sh_javascript">
-var module = new JsonModule({
+var module = new CRUDCollection({
   update : function($, id, obj, cb){
     // update your object here
     cb();
@@ -1528,7 +1528,7 @@ var module = new JsonModule({
 });
 </pre>
 </section>
-<section id="jsonmodule-upsert">
+<section id="crudCollection-upsert">
 <h5> upsert($, id, obj, cb) </h5>
 <p>
 In general, "upsert" is short for "update if existing, and insert
@@ -1545,7 +1545,7 @@ client and is NOT server-generated.
 </p>
 <p>
 Implement upsert() to allow resources to be upserted.  The 
-JsonModule will handle the json parsing and validation for you (
+CRUDCollection will handle the json parsing and validation for you (
 if you supply a <strong>schema</strong> or both 
 <strong>updateSchema</strong> AND <strong>createSchema</strong>
 ) and it will respond with appropriate error messages 
@@ -1561,7 +1561,7 @@ the option of not calling the callback at all and instead
 responding however you want.
 </p>
 <pre class="sh_javascript">
-var module = new JsonModule({
+var module = new CRUDCollection({
   upsert : function($, id, obj, cb){
     // upsert your object here
     cb();
@@ -1569,13 +1569,13 @@ var module = new JsonModule({
 });
 </pre>
 </section>
-<section id="jsonmodule-destroy">
+<section id="crudCollection-destroy">
 <h5> destroy($, id, cb) </h5>
 <p>
 The destroy() function is used for removing existing resources
 via DELETE to the individual resource's URI.  If the URI 
 already exists, the resource there will be removed.  If the 
-URI doesn't exist, JsonModule will automatically respond with 
+URI doesn't exist, CRUDCollection will automatically respond with 
 a 404 NOT FOUND status.
 </p>
 <p>
@@ -1590,7 +1590,7 @@ with no response body.  You have the option of not calling the
 callback at all and instead responding however you want.
 </p>
 <pre class="sh_javascript">
-var module = new JsonModule({
+var module = new CRUDCollection({
   destroy : function($, id, cb){
     // remove your object here
     cb();
@@ -1598,42 +1598,42 @@ var module = new JsonModule({
 });
 </pre>
 </section>
-<section id="jsonmodule-collectionGET">
+<section id="crudCollection-collectionGET">
 <h5> collectionGET($) </h5>
 <p>
 The collectionGET() function is a way of completely handling the GET for the
 collection resource if you don't want the automatic handling that list()
 provides.  This usually shouldn't be necessary.  Also note that this
-is basically just an alias for jsonModule.handler.GET.
+is basically just an alias for crudCollection.handler.GET.
 
 </p>
 <pre class="sh_javascript">
-var module = new JsonModule({
+var module = new CRUDCollection({
   collectionGET : function($){
     $.json({"make":"your own response"}).send();
   };
 });
 </pre>
 </section>
-<section id="jsonmodule-memberGET">
+<section id="crudCollection-memberGET">
 <h5> memberGET($) </h5>
 <p>
 The memberGET() function is a way of completely handling the GET for member
 resources (items in the collection) if you don't want the automatic
 handling that fetch() provides.  This usually shouldn't be necessary.
 Also note that this is basically just an alias for
-jsonModule.wildcard.GET.
+crudCollection.wildcard.GET.
 
 </p>
 <pre class="sh_javascript">
-var module = new JsonModule({
+var module = new CRUDCollection({
   memberGET : function($){
     $.json({"make":"your own response"}).send();
   };
 });
 </pre>
 </section>
-<section id="jsonmodule-updateSchema">
+<section id="crudCollection-updateSchema">
 <h5> updateSchema </h5>
 <p>
 The updateSchema property is a way to specify a 
@@ -1650,7 +1650,7 @@ how an update is validated.
 <pre class="sh_javascript">
 </pre>
 </section>
-<section id="jsonmodule-createSchema">
+<section id="crudCollection-createSchema">
 <h5> createSchema </h5>
 <p>
 The createSchema property is a way to specify a 
@@ -1667,7 +1667,7 @@ how a create (POST) is validated.
 <pre class="sh_javascript">
 </pre>
 </section>
-<section id="jsonmodule-schema">
+<section id="crudCollection-schema">
 <h5> schema </h5>
 <p>
 The schema property is a way to specify a 
@@ -1685,8 +1685,8 @@ are validated.
 </p>
 <pre class="sh_javascript">
 </pre>
-</section> <!-- /jsonmodule-schema -->
-</section> <!-- /jsonmodule -->
+</section> <!-- /crudCollection-schema -->
+</section> <!-- /crudCollection -->
 
 <section id="advancedrouting">
 <h3>Advanced Routing</h3>
