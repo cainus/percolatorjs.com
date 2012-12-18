@@ -461,8 +461,8 @@ var linkCollection = new CRUDCollection({
     });
   },
 
-  update : function($, obj, cb){
-    $.app.db.update(obj.id, obj, function(err){
+  update : function($, id, obj, cb){
+    $.app.db.update(id, obj, function(err){
       if (err){
         return $.status.internalServerError(err);
       }
