@@ -150,6 +150,7 @@
              <a href="#context-uri-pathJoin">pathJoin</a> &nbsp;
              <a href="#context-uri-query">query</a> &nbsp;
              <a href="#context-uri-querystring">queryString</a> &nbsp;
+             <a href="#context-uri-queryMerge">queryMerge</a> &nbsp;
              <a href="#context-uri-self">self</a> &nbsp;
              <a href="#context-uri-urlDecode">urlDecode</a> &nbsp;
              <a href="#context-uri-urlEncode">urlEncode  </a> &nbsp;
@@ -975,6 +976,25 @@ $.uri.query('http://asdf.com/path/?this=is&a=test');
 </dl>
 </section>
 
+<section id="context-uri-queryMerge">
+<dl>
+  <dt>
+$.uri.queryMerge(queryHash, [url]);
+  </dt>
+  <dd>
+Take an input object (the 'queryHash') and optionally a url (default is the current url) and create a new url with a 
+querystring that has the name/value pairs of the input object merged into it.
+    <pre class="sh_javascript">
+$.uri.queryMerge({ this:is, ok:null }, 'http://localhost/asdf?this=isnot&a=test&ok=true');
+// returns: 'http://localhost/asdf?this=is&a=test'
+</pre>
+Notice that a null value (in the case of 'ok') removes the ok value from the querystring.<br/>
+Also notice that the value of 'this' is changed from 'isnot' to 'is' and the value of 'a' is left
+untouched because the queryHash doesn't mention it.
+  </dd>
+</dl>
+</section>
+
 
 <section id="context-uri-querystring">
 <dl>
@@ -984,7 +1004,7 @@ $.uri.queryString(queryHash);
   <dd>
 Take an input object and create a querystring of the name/value pairs in the queryHash.
     <pre class="sh_javascript">
-$.uri.queryString({ this:is, a:test }});
+$.uri.queryString({ this:is, a:test });
 // returns: '?this=is&a=test'
 </pre>
   </dd>
