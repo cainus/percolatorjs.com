@@ -1440,7 +1440,7 @@ var module = new CRUDCollection({
 });
 </pre>
 <section id="crudCollection-fetch">
-<h5> fetch($, id, cb) </h5>
+<h5> fetch($, cb) </h5>
 <p>
 Implement the fetch() function to provide the GET handler
 for individual members of the collection.  If you don't 
@@ -1448,12 +1448,8 @@ implement this, you'll need to implement memberGET() to be
 able to GET resources for individual members.
 </p>
 
-<p>The fetch() function has three required parameters: the 
-context object, id, and cb.</p>
-
-<p>The <strong>id</strong> argument will simply be the last part of the 
-incoming path of the member url (ie If the url is 
-/messages/1234, the id will be '1234').</p>
+<p>The fetch() function has two required parameters: the 
+context object, and cb.</p>
 
 <p>The <strong>cb</strong> argument is a callback that takes two parameters.  The
 first parameter is an error object if any error occurred.  The
@@ -1475,8 +1471,8 @@ members as well.
 
 <pre class="sh_javascript">
 var module = new CRUDCollection({
-  fetch : function($, id, cb){
-    // get some item from your data source by the given id.
+  fetch : function($, cb){
+    // get some item from your data source, probably based on $.uri.pathEnd()
     cb(null, theObject);
   }
 });
