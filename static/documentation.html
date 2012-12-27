@@ -150,7 +150,6 @@
              <a href="#context-uri-pathJoin">pathJoin</a> &nbsp;
              <a href="#context-uri-query">query</a> &nbsp;
              <a href="#context-uri-querystring">queryString</a> &nbsp;
-             <a href="#context-uri-queryMerge">queryMerge</a> &nbsp;
              <a href="#context-uri-self">self</a> &nbsp;
              <a href="#context-uri-urlDecode">urlDecode</a> &nbsp;
              <a href="#context-uri-urlEncode">urlEncode  </a> &nbsp;
@@ -199,8 +198,8 @@
       <section id="helloworld">
         <h3>Hello World Quick Start:</h3>
 
-<ul>
-<li> Create a <code>server.js</code> in your project directory, and copy this code below into it:</li>
+<ul class="unstyled">
+<li> Create a <code class="incode">server.js</code> in your project directory, and copy this code below into it:</li>
 <pre class="sh_javascript">
 var Percolator = require('Percolator').Percolator;
 
@@ -213,13 +212,12 @@ server.listen(function(err){
 });
 </pre>
 
-</ul>
-<ul>
 <li>
 <p>Run the server:
-<code>node server.js</code>
+<code class="incode">node server.js</code>
 </p>
 </li>
+
 <li><p>See your "Hello World" output at http://localhost:3000/ and be completely floored by the greatest 
 API of all time.  Or not.</p>
 The output json look like this:
@@ -271,7 +269,7 @@ itself.
   clients' performance or bandwidth.
   </p>
   <p>
-    If you're still unconvinced, you can just pass <code>autoLink : false</code> to the
+    If you're still unconvinced, you can just pass <code class="incode">autoLink : false</code> to the
     Percolator constructor, and no links will be added automatically.
   </p>
 </div> <!-- /alert -->
@@ -453,7 +451,7 @@ To understand what the codes mean, please refer to <a href="http://www.w3.org/Pr
 </p>
 
 <h6>Usage</h6>
-These methods generally set the HTTP status and end the response, so in general you should not expect to write more to the response after these. If a response body makes sense, it will generally be written automatically. For clarity, it's recommended that when you call one of these functions, you call it with <code>return</code> in front of it. Here's an example:
+These methods generally set the HTTP status and end the response, so in general you should not expect to write more to the response after these. If a response body makes sense, it will generally be written automatically. For clarity, it's recommended that when you call one of these functions, you call it with <code class="incode">return</code> in front of it. Here's an example:
 
 <pre class="sh_javascript">
 server.route('/', {  GET : function($){
@@ -976,25 +974,6 @@ $.uri.query('http://asdf.com/path/?this=is&a=test');
 </dl>
 </section>
 
-<section id="context-uri-queryMerge">
-<dl>
-  <dt>
-$.uri.queryMerge(queryHash, [url]);
-  </dt>
-  <dd>
-Take an input object (the 'queryHash') and optionally a url (default is the current url) and create a new url with a 
-querystring that has the name/value pairs of the input object merged into it.
-    <pre class="sh_javascript">
-$.uri.queryMerge({ this:is, ok:null }, 'http://localhost/asdf?this=isnot&a=test&ok=true');
-// returns: 'http://localhost/asdf?this=is&a=test'
-</pre>
-Notice that a null value (in the case of 'ok') removes the ok value from the querystring.<br/>
-Also notice that the value of 'this' is changed from 'isnot' to 'is' and the value of 'a' is left
-untouched because the queryHash doesn't mention it.
-  </dd>
-</dl>
-</section>
-
 
 <section id="context-uri-querystring">
 <dl>
@@ -1004,7 +983,7 @@ $.uri.queryString(queryHash);
   <dd>
 Take an input object and create a querystring of the name/value pairs in the queryHash.
     <pre class="sh_javascript">
-$.uri.queryString({ this:is, a:test });
+$.uri.queryString({ this:is, a:test }});
 // returns: '?this=is&a=test'
 </pre>
   </dd>
@@ -1440,7 +1419,7 @@ var module = new CRUDCollection({
 });
 </pre>
 <section id="crudCollection-fetch">
-<h5> fetch($, cb) </h5>
+<h5> fetch($, id, cb) </h5>
 <p>
 Implement the fetch() function to provide the GET handler
 for individual members of the collection.  If you don't 
@@ -1448,13 +1427,17 @@ implement this, you'll need to implement memberGET() to be
 able to GET resources for individual members.
 </p>
 
-<p>The fetch() function has two required parameters: the 
-context object, and cb.</p>
+<p>The fetch() function has three required parameters: the 
+context object, id, and cb.</p>
+
+<p>The <strong>id</strong> argument will simply be the last part of the 
+incoming path of the member url (ie If the url is 
+/messages/1234, the id will be '1234').</p>
 
 <p>The <strong>cb</strong> argument is a callback that takes two parameters.  The
 first parameter is an error object if any error occurred.  The
-second parameter should be the object that was fetched from your
-data source for the current uri.  It will automatically
+second parameter should be an object that was fetched from your
+data source identified by the given id.  It will automatically
 by added to the context object as $.fetched in any member resource
 methods that you implement.
 </p>
@@ -1471,8 +1454,8 @@ members as well.
 
 <pre class="sh_javascript">
 var module = new CRUDCollection({
-  fetch : function($, cb){
-    // get some item from your data source, probably based on $.uri.pathEnd()
+  fetch : function($, id, cb){
+    // get some item from your data source by the given id.
     cb(null, theObject);
   }
 });
@@ -1529,7 +1512,7 @@ appropriate error messages automatically in the case of failures.
 <p>
 The function will be passed a context object ($), the 'id' at the
 end of the resource's URI, the object returned from 
-<code>fetch()</code>, and a callback.  The callback takes
+<code class="incode">fetch()</code>, and a callback.  The callback takes
 no parameters and can optionally be called in the event of 
 successful update to respond with a 303 redirect.  You have
 the option of not calling the callback at all and instead
@@ -1570,7 +1553,7 @@ automatically in the case of failures.
 <p>
 The function will be passed a context object ($), the 'id' at the
 end of the resource's URI, the object returned from 
-<code>fetch()</code>, and a callback.  The callback takes
+<code class="incode">fetch()</code>, and a callback.  The callback takes
 no parameters and can optionally be called in the event of 
 successful 'upsertion' to respond with a 303 redirect.  You have
 the option of not calling the callback at all and instead
@@ -1711,12 +1694,12 @@ are validated.
 <p>Percolator also allows a more advanced style of routing that lets you load 
 your route-handling resources from external files instead.</p>
 
-<ul>
+<ul class="unstyled">
 <li>With the "Hello World" example, we could instead move the handler into a file at the path 
-<code>./resources/index.js</code>.  (First create a <code>resources</code> directory and 
-then the <code>index.js</code> file in it, and then copying the handler logic into 
-<code>index.js</code> like so:</li>
-</ul>
+<code class="incode">./resources/index.js</code>.  (First create a <code class="incode">resources</code> directory and 
+then the <code class="incode">index.js</code> file in it, and then copying the handler logic into 
+<code class="incode">index.js</code> like so:</li>
+
 <pre class="sh_javascript">
 exports.handler = {
   GET : function(req, res){
@@ -1726,10 +1709,8 @@ exports.handler = {
 </pre>
 We'll call files like that "resources" from now on.
 
-<ul>
-<li>Change your server.js to call <code>routeDirectory()</code> instead of <code>server.route()
-</code> like so:</li>
-</ul>
+
+<li>Change your server.js to call <code class="incode">routeDirectory()</code> instead of <code class="incode">server.route()</code> like so:</li>
 
 <pre class="sh_javascript">
 var Percolator = require('Percolator');
@@ -1743,18 +1724,18 @@ server.routeDirectory(__dirname + '/resources', '/api', function(err){
 });
 </pre>
 
-<ul>
 <li>
 <p>Run the server:
-<code>node server.js</code>
+<code class="incode">node server.js</code>
 </p>
 </li>
+
 <li><p>See your "Hello World" output at http://localhost:3000/api .  You should see the same output
 as the original "Hello World" example.</p></li>
 </ul>
 <p>
 This worked because index.js is the reserved filename for responding to '/'.  If you want to respond
-to uris like '/hello', you can simply drop a <code>hello.js</code> in that folder (that exports a 
+to uris like '/hello', you can simply drop a <code class="incode">hello.js</code> in that folder (that exports a 
 similar handler) and it will respond to http://localhost:3000/api/hello .  The advantage to this way 
 of routing is that all your resources can be in separate files so that your project can be more easily
 organized.

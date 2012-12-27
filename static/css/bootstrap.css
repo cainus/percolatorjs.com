@@ -470,7 +470,7 @@ a:hover {
   clear: both;
 }
 p {
-  margin: 0 0 10px;
+/*  margin: 0 0 5px;*/
 }
 .lead {
   margin-bottom: 20px;
@@ -570,6 +570,7 @@ ol ul {
 }
 li {
   line-height: 20px;
+  margin-bottom:5px;
 }
 ul.unstyled,
 ol.unstyled {
@@ -665,6 +666,7 @@ address {
 }
 code,
 pre {
+  margin:0 20px;
   padding: 0 3px 2px;
   font-family: Menlo, Monaco, Consolas, "Courier New", monospace;
   font-size: 12px;
@@ -679,10 +681,13 @@ code {
   background-color: #f7f7f9;
   border: 1px solid #e1e1e8;
 }
+.incode {
+  margin:0;
+}
 pre {
   display: block;
   padding: 9.5px;
-  margin: 0 0 10px;
+  margin-bottom:10px;
   font-size: 13px;
   line-height: 20px;
   word-break: break-all;
