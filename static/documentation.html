@@ -119,6 +119,9 @@
           <li class="nav-sub-header"><a href="#context-status">$.status</a></li>
           <p class="nav-sub-header">
             <a href="#context-status-created">created</a>&nbsp;
+            <a href="#context-status-accepted">accepted</a>&nbsp;
+            <a href="#context-status-noContent">noContent</a>&nbsp;
+            <a href="#context-status-resetContent">resetContent</a>&nbsp;
             <a href="#context-status-movedPermanently">movedPermanently</a>&nbsp;
             <a href="#context-status-redirect">redirect</a>&nbsp;
             <a href="#context-status-badRequest">badRequest</a>&nbsp;
@@ -542,7 +545,10 @@ To understand what the codes mean, please refer to <a href="http://www.w3.org/Pr
 </p>
 
 <h6>Usage</h6>
-These methods generally set the HTTP status and end the response, so in general you should not expect to write more to the response after these. If a response body makes sense, it will generally be written automatically. For clarity, it's recommended that when you call one of these functions, you call it with <code class="incode">return</code> in front of it. Here's an example:
+These methods generally set the HTTP status and end the response, so in general you should 
+not expect to write more to the response after these. If a response body makes sense, it 
+will generally be written automatically. For clarity, it's recommended that when you call 
+one of these functions, you call it with <code class="incode">return</code> in front of it. Here's an example:
 
 <pre class="sh_javascript">
 server.route('/', {  GET : function($){
@@ -602,6 +608,26 @@ This method is used for HTTP STATUS 201 scenarios when the server has just creat
   </dt>
   <dd>
     Used to indicate that a response has been accepted, but not yet processed, this response will emit a "202 Accepted" status.
+  </dd>
+</dl>
+</section>
+<section id="context-status-noContent">
+<dl>
+  <dt>
+    $.status.noContent();
+  </dt>
+  <dd>
+    Used to indicate that a request was successful, but there's no body to return (for example, a successful DELETE).  This response will emit a "204 No Content" status.
+  </dd>
+</dl>
+</section>
+<section id="context-status-resetContent">
+<dl>
+  <dt>
+    $.status.resetContent();
+  </dt>
+  <dd>
+    Used to indicate that a request was sucessful so a related UI (usually a form) should clear its content.  This response will emit a "205 Reset Content" status.
   </dd>
 </dl>
 </section>
