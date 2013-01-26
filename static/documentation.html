@@ -106,6 +106,12 @@
             <a href="#server-listen">listen</a>&nbsp;
             <a href="#server-onrequest">onRequest</a>&nbsp;
           </p>
+          <li class="nav-header" ><a href="#handler">The Handler Object</a></li>
+          <li class="nav-sub-header"><a href="#handler-GET">GET</a></li>
+          <li class="nav-sub-header"><a href="#handler-POST">POST</a></li>
+          <li class="nav-sub-header"><a href="#handler-DELETE">DELETE</a></li>
+          <li class="nav-sub-header"><a href="#handler-PUT">PUT</a></li>
+          <li class="nav-sub-header"><a href="#handler-fetch">fetch</a></li>
           <li class="nav-header" ><a href="#context">The Context Object ($)</a></li>
           <li class="nav-sub-header"><a href="#context-req">$.req</a></li>
           <li class="nav-sub-header"><a href="#context-res">$.res</a></li>
@@ -148,6 +154,7 @@
              <a href="#context-uri-pathEnd">pathEnd</a> &nbsp;
              <a href="#context-uri-pathJoin">pathJoin</a> &nbsp;
              <a href="#context-uri-query">query</a> &nbsp;
+             <a href="#context-uri-queryClear">queryClear</a> &nbsp;
              <a href="#context-uri-queryMerge">queryMerge</a> &nbsp;
              <a href="#context-uri-querystring">queryString</a> &nbsp;
              <a href="#context-uri-self">self</a> &nbsp;
@@ -306,18 +313,20 @@ great for shared configuration, database objects, etc.
 <strong>staticDir</strong> - The directory on the filesystem from which you will serve static content (use an absolute path!).<br><strong>port</strong> - the http port.  A low port like 80 will not work unless you run the app with root privileges.  </p>
 <strong>autoLink</strong> - A boolean that indicates whether or not to automatically add some links to your json payloads for you.  This value is optional, and the default is 'true', meaning that hyperlinks will be added automatically to your json payloads.<br>
 <strong>port</strong> - the http port.  A low port like 80 will not work unless you run the app with root privileges.  </p>
+<strong>parseBody</strong> - A boolean that indicates whether or not to automatically wait for the entire body to stream in before
+calling an HTTP method handler.  If set to true, the body will be available as $.rawBody or parsed as json to an object available as $.body .</p>
 
 <p>You're obviously going to want to limit the number of app object variables that you add beyond the necessary ones, but
 certain types of objects might make sense in that shared space.</p>
 
 <section id="server-route">
-<h5>route(routeString, resourceObject)</h5>
+<h5>route(routeString, handler)</h5>
 <p>
 The route() method of the server takes two parameters, the route string and the resource object.
 </p>
 
 <p>
-It then sets a route using the route string that the given resource object will handle when
+It then sets a route using the route string that the given <a href="#handler">handler object</a> will handle when
 an incoming request matches that route.
 </p>
 
@@ -417,6 +426,88 @@ server.onRequest(function(handler, $, cb){
 });
 </pre>
 </section>
+</section>
+<section id="handler">
+<h3>The Handler Object</h3>
+<p>The handler object is not an object in the Percolator framework, but rather is one that an application
+written on the Percolator framework should provide for each route that it defines.  It is simply the 
+object that is passed to calls to <a href="#server-route">Server.route()</a> that specifies how a route should handle requests.
+</p>
+<p>
+  It may or may not implement any of the methods listed below.  If it does not implement a particular HTTP method, requests to the handler for that
+method will result in an automatic 405 (method not allowed) response.</p>
+<section id="handler-GET"></section>
+<h5>GET($)</h5>
+<p>
+Implementing this method on a handler object will allow it to respond to GET requests.  The only 
+parameter is a <a href="#context">context object</a>.  Any return value will be ignored.
+</p>
+<section id="handler-POST"></section>
+<h5>POST($)</h5>
+<p>
+Implementing this method on a handler object will allow it to respond to POST requests.  The only 
+parameter is a <a href="#context">context object</a>.  Any return value will be ignored.
+</p>
+
+<section id="handler-DELETE"></section>
+<h5>DELETE($)</h5>
+<p>
+Implementing this method on a handler object will allow it to respond to DELETE requests.  The only 
+parameter is a <a href="#context">context object</a>.  Any return value will be ignored.
+</p>
+
+<section id="handler-PUT"></section>
+<h5>PUT($)</h5>
+<p>
+Implementing this method on a handler object will allow it to respond to PUT requests.  The only 
+parameter is a <a href="#context">context object</a>.  Any return value will be ignored.
+</p>
+
+<section id="handler-fetch"></section>
+<h5>fetch($, cb)</h5>
+<p>
+Implementing fetch() on a handler object is an unnecessary but sometimes useful way to specify how
+404s will be determined, so you don&apos;t need to write the same 404-handling code in all methods
+that you support.  If you implement fetch(), fetch can do the 404-ing for you, before your regular 
+handler methods are even run.  In the event of a 404, a call to <a href="#status-notfound">$.status.notFound()
+</a> will be made automatically.
+</p>
+
+<p>The fetch() function has two required parameters: the <a href="#context">context object</a>
+, and cb.</p>
+
+<p>The <strong>cb</strong> argument is a callback that takes two parameters.  The
+first parameter is an error object if any error occurred.  The
+second parameter should be the object that was fetched from your
+data source for the current uri.  It will automatically
+by added to the context object as $.fetched in any member resource
+methods that you implement.
+</p>
+<p>
+The fetch() function will 404 for you automatically if you
+pass strict <strong>true</strong> to the callback (<strong>
+cb</strong>) as the first parameter.
+</p>
+<p>
+A handler object can also have a boolean property by the name of &apos;fetchOnPUT&apos; that defaults to true,
+but allows you to turn fetch off for PUT, even though fetch usually applies to all methods.  This
+is useful if you use PUT for creating new resources at the given URL, because a non-existent 
+resource would otherwise cause a 404.
+</p>
+
+<pre class="sh_javascript">
+var module = new CRUDCollection({
+  fetch : function($, cb){
+    // get some item from your data source, probably based on $.uri.pathEnd()
+    cb(null, theObject);
+  }
+});
+</pre>
+</section>
+
+
+
+
 </section>
 <section id="context">
 <h3>The Context Object ($)</h3>
@@ -974,6 +1065,20 @@ $.uri.query('http://asdf.com/path/?this=is&a=test');
 </dl>
 </section>
 
+<section id="context-uri-queryClear">
+<dl>
+  <dt>
+$.uri.queryClear([url]);
+  </dt>
+  <dd>
+Remove the querystring from the current URL, or optionally an input URL.
+    <pre class="sh_javascript">
+$.uri.queryClear('http://localhost/asdf?this=isnot&a=test&ok=true');
+// returns: 'http://localhost/asdf'
+</pre>
+  </dd>
+</dl>
+</section>
 <section id="context-uri-queryMerge">
 <dl>
   <dt>
