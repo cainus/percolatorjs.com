@@ -472,7 +472,7 @@ parameter is a <a href="#context">context object</a>.  Any return value will be 
 Implementing fetch() on a handler object is an unnecessary but sometimes useful way to specify how
 404s will be determined, so you don&apos;t need to write the same 404-handling code in all methods
 that you support.  If you implement fetch(), fetch can do the 404-ing for you, before your regular 
-handler methods are even run.  In the event of a 404, a call to <a href="#status-notfound">$.status.notFound()
+handler methods are even run.  In the event of a 404, a call to <a href="#context-status-notFound">$.status.notFound()
 </a> will be made automatically.
 </p>
 
