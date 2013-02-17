@@ -427,7 +427,7 @@ Here's an example:
 server.onRequest(function(handler, $, cb){
   // print the request method and url for every request.
   console.log(' <-- ', $.req.method, ' ', $.req.url);
-  cb(context);
+  cb($);
 });
 </pre>
 </section>
@@ -1946,7 +1946,7 @@ Here's an example with connect.favicon, used for serving up favicons:
 <pre class="sh_javascript">
 server.onRequest(function(handler, $, cb){
   connect.favicon()($.req, $.res, function(){
-    cb(context);
+    cb($);
   });
 });
 </pre>
