@@ -112,6 +112,7 @@
           <li class="nav-sub-header"><a href="#handler-DELETE">DELETE</a></li>
           <li class="nav-sub-header"><a href="#handler-PUT">PUT</a></li>
           <li class="nav-sub-header"><a href="#handler-fetch">fetch</a></li>
+          <li class="nav-sub-header"><a href="#handler-authenticate">authenticate</a></li>
           <li class="nav-header" ><a href="#context">The Context Object ($)</a></li>
           <li class="nav-sub-header"><a href="#context-req">$.req</a></li>
           <li class="nav-sub-header"><a href="#context-res">$.res</a></li>
@@ -196,6 +197,7 @@
           </p>
 
           <li class="nav-header" ><a href="#advancedrouting">Advanced Routing</a> </li>
+          <li class="nav-header" ><a href="#usingConnectMiddleware">Using Connect Middleware</a> </li>
         </ul>
       <section id="installation">
         <h3>Installation</h3>
@@ -465,6 +467,44 @@ parameter is a <a href="#context">context object</a>.  Any return value will be 
 Implementing this method on a handler object will allow it to respond to PUT requests.  The only 
 parameter is a <a href="#context">context object</a>.  Any return value will be ignored.
 </p>
+
+<section id="handler-authenticate"></section>
+<h5>authenticate($, cb)</h5>
+<p>
+Implementing authenticate() is not required but is convenient if you want
+to specify a general authentication strategy for all methods on the resource.  
+If you implement authenticate(), it will automatically return 401 responses for
+unauthenticated access while permitting authenticated access as normal.
+
+
+<p>The authenticate() function has two required parameters: the <a href="#context">context object</a>
+, and cb.</p>
+
+<p>The <strong>cb</strong> argument is a callback that takes two parameters.  The
+first parameter is an error object if any error occurred.  If the error object
+is strictly <strong>true</strong>, then the response will be a 401.  If the error
+object is non-strict-true but still truthy, then the response will be a 500 (internal 
+server error). The second parameter should be an object that represents the 
+logged in user.  It will automatically
+by added to the context object as $.authenticated in any member resource
+methods that you implement.
+</p>
+<pre class="sh_javascript">
+server.route('/someProtectedPath', {
+  authenticate : function($, cb){
+    // try to get the user here, based on cookie, Authentication header, etc
+    if (cannotGetUser){
+      return cb(true);  // Percolator will 401 for you
+    }
+    cb(someError, theUser);
+    // if there wasn't some other error, theUser will be available 
+    // at $.authenticated in all methods
+  },
+  GET : function($){
+    $.json({youAre : $.authenticated}).send();
+  }
+});
+</pre>
 
 <section id="handler-fetch"></section>
 <h5>fetch($, cb)</h5>
@@ -1887,6 +1927,31 @@ of routing is that all your resources can be in separate files so that your proj
 organized.
 </p>
 </section>
+<section id="usingConnectMiddleware"></section>
+<h3>Using Connect Middleware</h3>
+<p>Percolator doesn't support <a href="http://www.senchalabs.org/connect/">connect</a> 
+middleware directly, but it's still possible to use it.
+</p>
+
+<p>
+Connect middleware are just functions with req, res and cb parameters where cb is a callback function
+to be called when the middleware has performed its function and other handling should continue.  That means
+it can simply be called directly in a Percolator server's onRequest() handler.
+</p>
+
+<p>
+Here's an example with connect.favicon, used for serving up favicons:
+</p>
+<p>
+<pre class="sh_javascript">
+server.onRequest(function(handler, $, cb){
+  connect.favicon()($.req, $.res, function(){
+    cb(context);
+  });
+});
+</pre>
+
+</p>
     </div> <!-- /container -->
 
     <!-- Le javascript
