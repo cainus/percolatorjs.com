@@ -113,6 +113,7 @@
           <li class="nav-sub-header"><a href="#handler-PUT">PUT</a></li>
           <li class="nav-sub-header"><a href="#handler-fetch">fetch</a></li>
           <li class="nav-sub-header"><a href="#handler-authenticate">authenticate</a></li>
+          <li class="nav-sub-header"><a href="#handler-basicAuthenticate">basicAuthenticate</a></li>
           <li class="nav-header" ><a href="#context">The Context Object ($)</a></li>
           <li class="nav-sub-header"><a href="#context-req">$.req</a></li>
           <li class="nav-sub-header"><a href="#context-res">$.res</a></li>
@@ -499,6 +500,44 @@ server.route('/someProtectedPath', {
     cb(someError, theUser);
     // if there wasn't some other error, theUser will be available 
     // at $.authenticated in all methods
+  },
+  GET : function($){
+    $.json({youAre : $.authenticated}).send();
+  }
+});
+</pre>
+<section id="handler-basicAuthenticate"></section>
+<h5>basicAuthenticate(username, password, $, cb)</h5>
+<p>
+Implementing basicAuthenticate() is not required but is convenient if you want
+to use <a href="http://en.wikipedia.org/wiki/Basic_access_authentication">basic http authentication</a> 
+on the resource.  If you implement basicAuthenticate(), it will automatically return 401 responses for
+unauthenticated access while permitting authenticated access as normal.
+
+
+<p>The basicAuthenticate() function has four required parameters: the basic http auth username, 
+the basic http auth password, the <a href="#context">context object</a>
+, and a callback, cb.</p>
+
+<p>The <strong>cb</strong> argument is a callback that takes two parameters.  The
+first parameter is an error object if any error occurred.  If the error object
+is strictly <strong>true</strong>, then the response will be a 401.  If the error
+object is non-strict-true but still truthy, then the response will be a 500 (internal 
+server error). The second parameter should be an object that represents the 
+logged in user.  It will automatically
+by added to the context object as $.authenticated in any member resource
+methods that you implement.
+</p>
+<pre class="sh_javascript">
+server.route('/someProtectedPath', {
+  basicAuthenticate : function(username, password, $, cb){
+    // try to get the user here, based on cookie, Authentication header, etc
+    if (username === 'Pierre' && password === 'Collateur'){
+      return cb(null, {username : "Pierre", twitter_handle : "@Percolator"});
+      // user object will be available in $.authenticated in all methods
+    } else {
+      return cb(true);  // Percolator will 401 for you
+    }
   },
   GET : function($){
     $.json({youAre : $.authenticated}).send();
